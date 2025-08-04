@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
+	<PropertyGroup Label="Globals">
+		<ProjectVersion>2.1</ProjectVersion>
+		<DockerTargetOS>Linux</DockerTargetOS>
+		<DockerPublishLocally>False</DockerPublishLocally>
+		<ProjectGuid>b66fa1ea-4952-11f0-aae1-1c7eb69145b4</ProjectGuid>
+		<DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+		<DockerServiceUrl>{Scheme}://localhost:{ServicePort}/scalar/v1</DockerServiceUrl>
+		<DockerServiceName>sergin.hosts-all</DockerServiceName>
+		<DockerComposeProjectName>sergin-stack</DockerComposeProjectName>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="docker-compose.override.yml">
+			<DependentUpon>docker-compose.yml</DependentUpon>
+		</None>
+		<None Include="docker-compose.yml" />
+		<None Include=".dockerignore" />
+	</ItemGroup>
+</Project>

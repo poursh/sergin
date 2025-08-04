@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  sergin.hosts-all:
+    image: ${DOCKER_REGISTRY-}sergin-host    
+    container_name: Sergin.Hosts-All
+    build:
+      context: .
+      dockerfile: ../src/Hosts/Sergin.Hosts.All/Dockerfile    
+    ports:
+      - 5000:8080
+      - 5001:8081
+    depends_on:
+      - sergin.database
+      - sergin.dashboard
+
+  sergin.database:
+    image: postgres:17-alpine
+    container_name: Sergin.Database
+    environment:
+      POSTGRES_PASSWORD: Ww4pC8bzn4
+    ports:
+      - 5432:5432
+    volumes:
+      - ./.containers/database/postgres/data:/var/lib/postgresql/data
+
+  sergin.dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.3
+    container_name: Sergin.Dashboard
+    environment:
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
+    ports:
+      - 18888:18888
+      - 4317:18889

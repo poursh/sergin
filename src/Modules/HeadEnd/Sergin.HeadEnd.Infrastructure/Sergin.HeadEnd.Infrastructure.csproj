@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>		
+		<ProjectReference Include="..\..\..\SharedKernel\Sergin.SharedKernel.Infrastructure\Sergin.SharedKernel.Infrastructure.csproj" />
+		<ProjectReference Include="..\Sergin.HeadEnd.Application\Sergin.HeadEnd.Application.csproj" />
+		<ProjectReference Include="..\Sergin.HeadEnd.Infrastructure.Data\Sergin.HeadEnd.Infrastructure.Data.csproj" />
+	</ItemGroup>
+	
+</Project>
