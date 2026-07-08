@@ -1,0 +1,18 @@
+{
+  "env": {
+    "EDITOR": "code --wait"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(find . -type d -not -path '*/\\\\.*' -not -path '*/bin/*' -not -path '*/obj/*')",
+      "PowerShell(dotnet restore *)",
+      "PowerShell(dotnet build *)",
+      "PowerShell(dotnet clean *)",
+      "PowerShell(dotnet test *)"
+    ]
+  },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true
+  },
+  "enabledMcpjsonServers": []
+}
