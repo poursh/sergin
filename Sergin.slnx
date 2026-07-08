@@ -8,6 +8,8 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
   </Folder>
   <Folder Name="/solution-items/.claude/">
     <File Path=".claude/CLAUDE.md" />
