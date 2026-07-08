@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   sergin.hosts-all:
     image: ${DOCKER_REGISTRY-}sergin-host    
