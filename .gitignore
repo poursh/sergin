@@ -484,5 +484,8 @@ $RECYCLE.BIN/
 *.swp
 
 
-# RTS 
+# Sergin
 docker-compose/.containers
+
+# Claude Code local user settings (keep shared settings.json / CLAUDE.md / agents tracked)
+.claude/settings.local.json
