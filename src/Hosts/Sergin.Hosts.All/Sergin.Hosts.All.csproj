@@ -8,16 +8,28 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Modules\HeadEnd\Sergin.HeadEnd\Sergin.HeadEnd.csproj" />
+		<ProjectReference Include="..\..\Modules\UserAccess\Sergin.UserAccess\Sergin.UserAccess.csproj" />
 		<ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastracture.WebApi\Sergin.SharedKernel.Infrastracture.WebApi.csproj" />
 		<ProjectReference Include="..\Sergin.Hosts.Shared\Sergin.Hosts.Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Scalar.AspNetCore" Version="2.5.6" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.16.10" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!--
+			GHSA-v5pm-xwqc-g5wc (CVE-2026-49451): stack overflow when PARSING untrusted OpenAPI
+			documents in Microsoft.OpenApi. Pulled in transitively (2.x) by Microsoft.AspNetCore.OpenApi
+			10.0.9; the only fixed line is 3.x, which is API-incompatible with the .NET 10 OpenAPI stack.
+			This service only GENERATES its own OpenAPI document (for Scalar) and never parses external
+			documents, so it is not exposed. Revisit when an AspNetCore.OpenApi patch ships on a fixed 2.x.
+		-->
+		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v5pm-xwqc-g5wc" />
 	</ItemGroup>
 
 </Project>

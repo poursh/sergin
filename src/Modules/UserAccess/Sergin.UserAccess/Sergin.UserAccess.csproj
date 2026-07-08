@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\Sergin.UserAccess.Infrastructure\Sergin.UserAccess.Infrastructure.csproj" />
+		<ProjectReference Include="..\Sergin.UserAccess.Presentation\Sergin.UserAccess.Presentation.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+</Project>

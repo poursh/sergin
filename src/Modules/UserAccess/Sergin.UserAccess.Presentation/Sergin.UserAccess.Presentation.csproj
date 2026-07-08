@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedKernel\Sergin.SharedKernel.Presentation.WebApi\Sergin.SharedKernel.Presentation.WebApi.csproj" />
+    <ProjectReference Include="..\Sergin.UserAccess.Application\Sergin.UserAccess.Application.csproj" />
+  </ItemGroup>
+</Project>

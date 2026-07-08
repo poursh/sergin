@@ -1,0 +1,57 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/solution-items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/solution-items/.claude/">
+    <File Path=".claude/CLAUDE.md" />
+    <File Path=".claude/settings.json" />
+    <File Path=".mcp.json" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Hosts/">
+    <Project Path="src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj" />
+    <Project Path="src/Hosts/Sergin.Hosts.Shared/Sergin.Hosts.Shared.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/HeadEnd/">
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Application/Sergin.HeadEnd.Application.csproj" />
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Domain/Sergin.HeadEnd.Domain.csproj" />
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure.Data/Sergin.HeadEnd.Infrastructure.Data.csproj" />
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure/Sergin.HeadEnd.Infrastructure.csproj" />
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Presentation/Sergin.HeadEnd.Presentation.csproj" />
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd/Sergin.HeadEnd.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/UserAccess/">
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Application/Sergin.UserAccess.Application.csproj" />
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Domain/Sergin.UserAccess.Domain.csproj" />
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Infrastructure.Data/Sergin.UserAccess.Infrastructure.Data.csproj" />
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Infrastructure/Sergin.UserAccess.Infrastructure.csproj" />
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Presentation/Sergin.UserAccess.Presentation.csproj" />
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess/Sergin.UserAccess.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/">
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Application/Sergin.SharedKernel.Application.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Domain/Sergin.SharedKernel.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/Infrastracture/">
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Infrastracture.Data/Sergin.SharedKernel.Infrastracture.Data.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Infrastracture.WebApi/Sergin.SharedKernel.Infrastracture.WebApi.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Infrastructure.Data.EFCore/Sergin.SharedKernel.Infrastructure.Data.EFCore.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Infrastructure/Sergin.SharedKernel.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/Presentation/">
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Presentation.WebApi/Sergin.SharedKernel.Presentation.WebApi.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Presentation/Sergin.SharedKernel.Presentation.csproj" />
+  </Folder>
+  <Project Path="docker-compose/docker-compose.dcproj">
+    <Platform Project="AnyCPU" />
+    <Build Solution="Debug|Any CPU" />
+  </Project>
+</Solution>

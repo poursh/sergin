@@ -13,6 +13,4 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
-[assembly: InternalsVisibleTo("Sergin.Hosts.All")]
-[assembly: InternalsVisibleTo("Sergin.HeadEnd")]
 [assembly: InternalsVisibleTo("Sergin.UserAccess")]

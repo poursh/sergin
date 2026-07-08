@@ -1,5 +1,6 @@
 using Scalar.AspNetCore;
 using Sergin.HeadEnd;
+using Sergin.UserAccess;
 using Sergin.SharedKernel.Application.Commands;
 using Sergin.SharedKernel.Application.Events;
 using Sergin.SharedKernel.Application.Localizations;
@@ -22,6 +23,7 @@ builder.Services.AddMediatR(
     options =>
     {
         options.RegisterHeadEndCommands();
+        options.RegisterUserAccessCommands();
 
         options.AddOpenBehavior(typeof(PermissionCheckPipelineBehavior<,>));
         options.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
@@ -41,10 +43,12 @@ builder.Services.AddScoped(p => p.GetRequiredService<IUserContextFactory>().Crea
 builder.Services.AddSingleton<ILocalizer, DefaultLocalizer>();
 
 builder.Services.AddHeadEndModule(serginSection);
+builder.Services.AddUserAccessModule(serginSection);
 
 WebApplication app = builder.Build();
 
 await app.RunHeadEndModule();
+await app.RunUserAccessModule();
 
 app.MapOpenApi();
 
