@@ -9,15 +9,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj", "src/Hosts/Sergin.Hosts.All/"]
-RUN dotnet restore "./src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj"
+# Copy the whole source tree: this is a modular monolith whose host project
+# references the module/SharedKernel projects and relies on Directory.Build.props,
+# so a restore needs every referenced .csproj present.
 COPY . .
-WORKDIR "/src/Hosts/Sergin.Hosts.All"
-RUN dotnet build "./Sergin.Hosts.All.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore "src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj"
+RUN dotnet build "src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Sergin.Hosts.All.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

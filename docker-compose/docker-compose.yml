@@ -3,14 +3,20 @@ services:
     image: ${DOCKER_REGISTRY-}sergin-host    
     container_name: Sergin.Hosts-All
     build:
-      context: .
-      dockerfile: ../src/Hosts/Sergin.Hosts.All/Dockerfile    
+      context: ..
+      dockerfile: src/Hosts/Sergin.Hosts.All/Dockerfile
     ports:
       - 5000:8080
       - 5001:8081
+    environment:
+      # Development applies EF migrations on startup and loads the DB connection
+      # string (from appsettings.Development.json, host = sergin.database).
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
-      - sergin.database
-      - sergin.dashboard
+      sergin.database:
+        condition: service_healthy
+      sergin.dashboard:
+        condition: service_started
 
   sergin.database:
     image: postgres:17-alpine
@@ -21,6 +27,11 @@ services:
       - 5432:5432
     volumes:
       - ./.containers/database/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   sergin.dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:13.4
