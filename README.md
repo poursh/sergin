@@ -55,16 +55,16 @@ Requires the **.NET 10 SDK** (VS 17.13+ / Rider). Run all commands from the repo
 # Build (warnings are treated as errors — analyzers + SonarAnalyzer enforced)
 dotnet build Sergin.slnx
 
-# Run the API directly (all-in-one host; Development profile applies EF migrations on startup)
-dotnet run --project src/Hosts/Sergin.Hosts.All
-# → http://localhost:5000, Scalar API UI at /scalar/v1
-
-# Run via .NET Aspire (spins up Postgres + pgAdmin + dashboard, then the API)
-dotnet run --project Sergin.Host
-
 # Run everything in Docker (API + postgres:17 + Aspire dashboard)
 docker compose -f docker-compose/docker-compose.yml up --build
 ```
+
+### Run from Visual Studio
+
+If you use **Visual Studio** (17.13+), open `Sergin.slnx`, set **`docker-compose`**
+(`docker-compose/docker-compose.dcproj`) as the startup project, and press **F5**.
+Visual Studio builds the images and launches the full stack (API + `postgres:17` +
+Aspire dashboard) via Docker Compose, then attaches the debugger to the API.
 
 ### EF Core migrations
 
