@@ -5,10 +5,11 @@
   "permissions": {
     "allow": [
       "Bash(find . -type d -not -path '*/\\\\.*' -not -path '*/bin/*' -not -path '*/obj/*')",
-      "PowerShell(dotnet restore *)",
-      "PowerShell(dotnet build *)",
-      "PowerShell(dotnet clean *)",
-      "PowerShell(dotnet test *)"
+      "Bash(dotnet restore *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet clean *)",
+      "Bash(dotnet test *)",
+      "Bash(docker compose *)"
     ]
   },
   "enabledPlugins": {
