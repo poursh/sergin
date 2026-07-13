@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Sergin.HeadEnd.Application.Devices.Commands.GetOne;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.HeadEnd.Presentation.Devices.Endpoints.GetOne;
+namespace Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.GetOne;
 
 internal class GetDeviceEndpoint : IEndpoint
 {

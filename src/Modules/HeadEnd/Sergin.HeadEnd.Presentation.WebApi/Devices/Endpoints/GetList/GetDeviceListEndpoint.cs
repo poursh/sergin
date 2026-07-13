@@ -5,7 +5,7 @@ using Sergin.HeadEnd.Application.Devices.Commands.GetList;
 using Sergin.SharedKernel.Application;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.HeadEnd.Presentation.Devices.Endpoints.GetList;
+namespace Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.GetList;
 internal class GetDeviceListEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routeBuilder)

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Sergin.UserAccess.Application.Users.Commands.GetOne;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.UserAccess.Presentation.Users.Endpoints.GetOne;
+namespace Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetOne;
 
 internal class GetUserEndpoint : IEndpoint
 {

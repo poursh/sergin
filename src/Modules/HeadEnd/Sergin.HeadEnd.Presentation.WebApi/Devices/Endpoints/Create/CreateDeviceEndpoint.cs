@@ -6,7 +6,7 @@ using Sergin.HeadEnd.Application.Devices.Commands.Create;
 using Sergin.HeadEnd.Domain.Devices;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.HeadEnd.Presentation.Devices.Endpoints.Create;
+namespace Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.Create;
 
 internal class CreateDeviceEndpoint : IEndpoint
 {

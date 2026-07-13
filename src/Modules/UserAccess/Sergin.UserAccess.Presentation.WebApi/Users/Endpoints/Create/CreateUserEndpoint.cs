@@ -6,7 +6,7 @@ using Sergin.UserAccess.Application.Users.Commands.Create;
 using Sergin.UserAccess.Domain.Users;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.UserAccess.Presentation.Users.Endpoints.Create;
+namespace Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
 
 internal class CreateUserEndpoint : IEndpoint
 {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
 		<ProjectReference Include="..\Sergin.HeadEnd.Infrastructure\Sergin.HeadEnd.Infrastructure.csproj" />
-		<ProjectReference Include="..\Sergin.HeadEnd.Presentation\Sergin.HeadEnd.Presentation.csproj" />
+		<ProjectReference Include="..\Sergin.HeadEnd.Presentation.WebApi\Sergin.HeadEnd.Presentation.WebApi.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />

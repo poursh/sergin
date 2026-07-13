@@ -5,7 +5,7 @@ using Sergin.UserAccess.Application.Users.Commands.GetList;
 using Sergin.SharedKernel.Application;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
-namespace Sergin.UserAccess.Presentation.Users.Endpoints.GetList;
+namespace Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetList;
 internal class GetUserListEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder routeBuilder)

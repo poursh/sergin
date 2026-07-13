@@ -6,9 +6,9 @@ using Sergin.HeadEnd.Application.Devices.Commands.GetOne;
 using Sergin.HeadEnd.Domain.Devices;
 using Sergin.HeadEnd.Infrastructure.Devices.Repositories;
 using Sergin.HeadEnd.Infrastructure.Devices.Repositories.Queries;
-using Sergin.HeadEnd.Presentation.Devices.Endpoints.Create;
-using Sergin.HeadEnd.Presentation.Devices.Endpoints.GetList;
-using Sergin.HeadEnd.Presentation.Devices.Endpoints.GetOne;
+using Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.Create;
+using Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.GetList;
+using Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.GetOne;
 
 namespace Sergin.HeadEnd.Devices;
 

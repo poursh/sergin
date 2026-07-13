@@ -6,9 +6,9 @@ using Sergin.UserAccess.Application.Users.Commands.GetOne;
 using Sergin.UserAccess.Domain.Users;
 using Sergin.UserAccess.Infrastructure.Users.Repositories;
 using Sergin.UserAccess.Infrastructure.Users.Repositories.Queries;
-using Sergin.UserAccess.Presentation.Users.Endpoints.Create;
-using Sergin.UserAccess.Presentation.Users.Endpoints.GetList;
-using Sergin.UserAccess.Presentation.Users.Endpoints.GetOne;
+using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
+using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetList;
+using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetOne;
 
 namespace Sergin.UserAccess.Users;
 

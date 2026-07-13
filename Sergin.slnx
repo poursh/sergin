@@ -27,16 +27,20 @@
     <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Domain/Sergin.HeadEnd.Domain.csproj" />
     <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure.Data/Sergin.HeadEnd.Infrastructure.Data.csproj" />
     <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure/Sergin.HeadEnd.Infrastructure.csproj" />
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Presentation/Sergin.HeadEnd.Presentation.csproj" />
     <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd/Sergin.HeadEnd.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/HeadEnd/Presentation/">
+    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Presentation.WebApi/Sergin.HeadEnd.Presentation.WebApi.csproj" />
   </Folder>
   <Folder Name="/src/Modules/UserAccess/">
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Application/Sergin.UserAccess.Application.csproj" />
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Domain/Sergin.UserAccess.Domain.csproj" />
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Infrastructure.Data/Sergin.UserAccess.Infrastructure.Data.csproj" />
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Infrastructure/Sergin.UserAccess.Infrastructure.csproj" />
-    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Presentation/Sergin.UserAccess.Presentation.csproj" />
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess/Sergin.UserAccess.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/UserAccess/Presentation/">
+    <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Presentation.WebApi/Sergin.UserAccess.Presentation.WebApi.csproj" />
   </Folder>
   <Folder Name="/src/SharedKernel/">
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Application/Sergin.SharedKernel.Application.csproj" />
