@@ -38,6 +38,10 @@ dotnet ef migrations add <Name> \
 
 Migrations are applied automatically at startup **only in the Development environment** (`RunHeadEndModule` → `ApplyMigration`).
 
+## Git conventions
+
+- **Commit authorship**: Never add a `Co-Authored-By: Claude` trailer or otherwise attribute commits to Claude/the assistant. Commit under the user's configured git identity only.
+
 ## Critical build constraint
 
 `Directory.Build.props` sets `TreatWarningsAsErrors=true`, `AnalysisMode=All`, and enables **SonarAnalyzer.CSharp** + `EnforceCodeStyleInBuild`. Any analyzer warning, style violation, or nullable warning **fails the build**. Nullable and implicit usings are enabled solution-wide. Write code that passes analysis cleanly the first time.
