@@ -1,6 +1,7 @@
 {
   "env": {
-    "EDITOR": "code --wait"
+    "EDITOR": "code --wait",
+    "CLAUDE_CODE_NEW_INIT": "1"
   },
   "permissions": {
     "allow": [
@@ -15,5 +16,18 @@
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true
   },
-  "enabledMcpjsonServers": []
+  "enabledMcpjsonServers": [],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -NonInteractive -Command '$i = [Console]::In.ReadToEnd() | ConvertFrom-Json; if ($i.tool_input.file_path -like \"*.cs\") { $r = [System.IO.Path]::GetRelativePath((Get-Location).Path, $i.tool_input.file_path).Replace(\"\\\",\"/\"); dotnet format Sergin.slnx --include $r --no-restore -v quiet }' 2>$null"
+          }
+        ]
+      }
+    ]
+  }
 }
