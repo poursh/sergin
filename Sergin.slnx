@@ -16,6 +16,10 @@
     <File Path=".claude/settings.json" />
     <File Path=".mcp.json" />
   </Folder>
+  <Folder Name="/solution-items/.claude/skills/" />
+  <Folder Name="/solution-items/.claude/skills/add-feature/">
+    <File Path=".claude/skills/add-feature/SKILL.md" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Hosts/">
     <Project Path="src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj" />
