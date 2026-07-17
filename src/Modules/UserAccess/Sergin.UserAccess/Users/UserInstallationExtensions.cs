@@ -7,6 +7,7 @@ using Sergin.UserAccess.Domain.Users;
 using Sergin.UserAccess.Infrastructure.Users.Repositories;
 using Sergin.UserAccess.Infrastructure.Users.Repositories.Queries;
 using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
+using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.DeactivateUser;
 using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetList;
 using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.GetOne;
 
@@ -27,6 +28,7 @@ internal static class UserInstallationExtensions
     internal static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
         new CreateUserEndpoint().MapEndpoint(routeBuilder);
+        new DeactivateUserEndpoint().MapEndpoint(routeBuilder);
         new GetUserEndpoint().MapEndpoint(routeBuilder);
         new GetUserListEndpoint().MapEndpoint(routeBuilder);
 

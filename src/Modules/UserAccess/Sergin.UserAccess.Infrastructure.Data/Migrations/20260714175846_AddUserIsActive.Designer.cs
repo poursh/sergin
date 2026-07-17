@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sergin.UserAccess.Infrastructure.Data;
@@ -11,9 +12,11 @@ using Sergin.UserAccess.Infrastructure.Data;
 namespace Sergin.UserAccess.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(UserAccessDbContext))]
-    partial class UserAccessDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260714175846_AddUserIsActive")]
+    partial class AddUserIsActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
