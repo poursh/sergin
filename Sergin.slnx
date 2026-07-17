@@ -20,6 +20,9 @@
   <Folder Name="/solution-items/.claude/skills/add-feature/">
     <File Path=".claude/skills/add-feature/SKILL.md" />
   </Folder>
+  <Folder Name="/solution-items/.claude/skills/add-module/">
+    <File Path=".claude/skills/add-module/SKILL.md" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Hosts/">
     <Project Path="src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj" />
