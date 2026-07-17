@@ -4,7 +4,7 @@ services:
     container_name: Sergin.Hosts-All
     build:
       context: ..
-      dockerfile: src/Hosts/Sergin.Hosts.All/Dockerfile
+      dockerfile: src/Hosts/Sergin.Hosts.WebApi.All/Dockerfile
     ports:
       - 5000:8080
       - 5001:8081

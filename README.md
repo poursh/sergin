@@ -18,7 +18,7 @@ The solution follows modern architecture practices to keep domain logic clear an
 ```
 src/
 ├── Hosts/
-│   ├── Sergin.Hosts.All        # Runnable all-in-one Web API (composition root)
+│   ├── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 │   └── Sergin.Hosts.Shared     # Aspire service defaults (OpenTelemetry, health checks)
 ├── Modules/
 │   ├── HeadEnd/                # IoT device management module
@@ -39,7 +39,7 @@ Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infras
 ## 🛠 Technologies & Libraries
 
 - **.NET 10** – Core development framework
-- **.NET Aspire** – Local orchestration and observability dashboard (Postgres + pgAdmin + API)
+- **.NET Aspire** – Observability dashboard (via the `aspire-dashboard` container in Docker Compose)
 - **Entity Framework Core** – ORM for the write side, migrations, and value converters
 - **Dapper / raw SQL** – High-performance read-side query repositories via `IDbConnectionFactory`
 - **PostgreSQL** – Relational database backend (per-module schemas)
@@ -73,7 +73,7 @@ Each module owns its own `DbContext` and migrations. Example for the HeadEnd mod
 ```bash
 dotnet ef migrations add <Name> \
   --project src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure.Data \
-  --startup-project src/Hosts/Sergin.Hosts.All
+  --startup-project src/Hosts/Sergin.Hosts.WebApi.All
 ```
 
 Migrations are applied automatically at startup **only in the Development environment**.

@@ -29,7 +29,7 @@ Same shape but under `Commands/<Feature>/` still (this repo keeps queries in the
 1. Check each new project's `GlobalUsings.cs` before adding `using` statements — many namespaces (`ErrorOr`, `Sergin.SharedKernel.*`) are already global.
 2. If the feature needs new/changed columns, add or update the `IEntityTypeConfiguration` in `Sergin.<Module>.Infrastructure.Data`, then generate a migration:
    ```
-   dotnet ef migrations add <Name> --project src/Modules/<Module>/Sergin.<Module>.Infrastructure.Data --startup-project src/Hosts/Sergin.Hosts.All
+   dotnet ef migrations add <Name> --project src/Modules/<Module>/Sergin.<Module>.Infrastructure.Data --startup-project src/Hosts/Sergin.Hosts.WebApi.All
    ```
 3. Build to confirm it compiles cleanly — this repo treats every analyzer/style warning as a build error:
    ```

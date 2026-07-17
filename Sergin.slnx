@@ -22,7 +22,7 @@
   </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Hosts/">
-    <Project Path="src/Hosts/Sergin.Hosts.All/Sergin.Hosts.All.csproj" />
+    <Project Path="src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj" />
     <Project Path="src/Hosts/Sergin.Hosts.Shared/Sergin.Hosts.Shared.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
