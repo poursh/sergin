@@ -1,7 +1,7 @@
 ---
 name: add-feature
 description: Scaffold a new CQRS vertical slice (command or query) in a Sergin module — Application handler, Infrastructure repository wiring, Presentation endpoint, and DI/route registration — following the existing UserAccess module pattern. Invoke with /add-feature.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Scaffold a new vertical-slice feature for: $ARGUMENTS

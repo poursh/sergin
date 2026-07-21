@@ -1,7 +1,7 @@
 ---
 name: add-module
 description: Scaffold a brand-new module in the Sergin modular monolith — six projects (Domain, Application, Infrastructure, Infrastructure.Data, Presentation.WebApi, and the no-suffix composition root), their DbContext/schema/migrations wiring, solution-file entries, and host registration — following the existing UserAccess module as the template. Invoke with /add-module.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Scaffold a new module for: $ARGUMENTS
