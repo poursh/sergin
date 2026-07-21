@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Sergin.HeadEnd.Application.Devices.Commands.Create;
 using Sergin.HeadEnd.Domain.Devices;
+using Sergin.HeadEnd.Domain.Manufacturers;
 using Sergin.SharedKernel.Presentation.WebApi.Endpoints.Results;
 
 namespace Sergin.HeadEnd.Presentation.WebApi.Devices.Endpoints.Create;
@@ -17,7 +18,8 @@ internal class CreateDeviceEndpoint : IEndpoint
             {
                 ErrorOr<CreateDeviceCommandResponse> res = await sender.Send(
                     new CreateDeviceCommand(
-                        new DeviceId(device.DeviceId)));
+                        new DeviceId(device.DeviceId),
+                        new ManufacturerId(device.ManufacturerId)));
 
                 return res.ToApiResult();
             })

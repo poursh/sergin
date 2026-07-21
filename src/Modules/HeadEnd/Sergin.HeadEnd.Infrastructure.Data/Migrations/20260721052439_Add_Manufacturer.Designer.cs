@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sergin.HeadEnd.Infrastructure.Data;
@@ -11,9 +12,11 @@ using Sergin.HeadEnd.Infrastructure.Data;
 namespace Sergin.HeadEnd.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(HeadEndDbContext))]
-    partial class HeadEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260721052439_Add_Manufacturer")]
+    partial class Add_Manufacturer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

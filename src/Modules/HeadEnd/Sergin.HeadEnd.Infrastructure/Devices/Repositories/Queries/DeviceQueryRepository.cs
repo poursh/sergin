@@ -19,7 +19,7 @@ internal sealed class DeviceQueryRepository(
 
         string queries =
            """
-            SELECT id, device_id AS deviceId 
+            SELECT id, device_id AS deviceId, manufacturer_id AS manufacturerId
             FROM hes.device
             WHERE id = @Id;
             """;
@@ -37,7 +37,7 @@ internal sealed class DeviceQueryRepository(
             """
             SELECT count(*) FROM hes.device;
 
-            SELECT id, device_id AS deviceId 
+            SELECT id, device_id AS deviceId, manufacturer_id AS manufacturerId
             FROM hes.device
             LIMIT @PageSize OFFSET @Offset;
             """;

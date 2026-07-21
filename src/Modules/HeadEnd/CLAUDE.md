@@ -6,9 +6,9 @@ See the root `.claude/CLAUDE.md` for cross-module conventions (layering, CQRS sp
 
 ## `Devices` aggregate
 
-`Sergin.HeadEnd.Domain/Devices/Device.cs` — `AggregateRoot<DeviceIntenralId>` (note the misspelling — it's the real type name, match it). `DeviceId` is the business-facing string key; `DeviceIntenralId` is the internal `Guid` PK.
+`Sergin.HeadEnd.Domain/Devices/Device.cs` — `AggregateRoot<DeviceIntenralId>` (note the misspelling — it's the real type name, match it). `DeviceId` is the business-facing string key; `DeviceIntenralId` is the internal `Guid` PK. `Device` also carries a mandatory `ManufacturerId` FK (see `Manufacturers` aggregate below) — set via `Device.Create(DeviceId, ManufacturerId)`.
 
-**`DeviceModel` is an unfinished, dangling piece**: `Sergin.HeadEnd.Domain/DeviceModels/DeviceModel.cs` defines a `DeviceModel` aggregate, and `Device.cs` has a commented-out `ModelId`/`Model` relationship and a commented-out `Create(DeviceModelInternalId)` factory overload. Neither is wired into anything — no repository, no Application slice, no endpoint, no EF configuration. Don't build a new feature on top of this relationship without checking with the user first; if you need device-model data, treat `DeviceModel` as a bare aggregate stub, not an established pattern.
+**`DeviceModel` is an unfinished, dangling piece**: `Sergin.HeadEnd.Domain/DeviceModels/DeviceModel.cs` defines a `DeviceModel` aggregate, and `Device.cs` has a commented-out `ModelId`/`Model` relationship and a commented-out `Create(DeviceModelInternalId)` factory overload. Neither is wired into anything — no repository, no Application slice, no endpoint, no EF configuration. Don't build a new feature on top of this relationship without checking with the user first; if you need device-model data, treat `DeviceModel` as a bare aggregate stub, not an established pattern. This is unrelated to the (fully wired) `Manufacturers` relationship below.
 
 Implemented feature slices (`Devices/Commands/<Feature>/` in Application, mirrored in Infrastructure/Presentation):
 
@@ -18,7 +18,20 @@ Implemented feature slices (`Devices/Commands/<Feature>/` in Application, mirror
 | `GetOne` | query | `GET /hes/devices/{deviceId:guid}` | `permission.hes.devices.read` |
 | `GetList` | query | `GET /hes/devices` (`[AsParameters] ListQueryRequestModel`) | none |
 
+## `Manufacturers` aggregate
+
+`Sergin.HeadEnd.Domain/Manufacturers/Manufacturer.cs` — `AggregateRoot<ManufacturerId>`, private ctor + `static Create(ManufacturerName, ManufacturerAddress?)` factory. `Name` is mandatory, `Address` is optional (nullable value object, nullable `ManufacturerAddressConverter`). `Device.ManufacturerId` is a required FK to this aggregate (`hes.device.manufacturer_id` → `hes.manufacturer.id`, configured via `HasOne<Manufacturer>().WithMany()` in `DeviceEntityTypeConfiguration` — no navigation property either direction, matching the rest of this module's style).
+
+Implemented feature slices (`Manufacturers/Commands/<Feature>/` in Application, mirrored in Infrastructure/Presentation):
+
+| Feature | Kind | Route | Permission |
+|---|---|---|---|
+| `Create` | command | `POST /hes/manufacturers` | none |
+| `GetOne` | query | `GET /hes/manufacturers/{manufacturerId:guid}` | `permission.hes.manufacturers.read` |
+| `GetList` | query | `GET /hes/manufacturers` (`[AsParameters] ListQueryRequestModel`) | none |
+
 ## Repositories
 
 - `IDeviceRepository` (`Domain/Devices/`) extends the generic `IRepository<Device, DeviceIntenralId>` with one extra method, `GetByDeviceId(DeviceId)` — a precedent for adding aggregate-specific lookups to the repository interface when the generic CRUD isn't enough, rather than reaching into EF from the Application layer.
 - Query repositories follow the same one-interface-per-feature split as UserAccess (`IGetDeviceQueryRepository`, `IGetDeviceListQueryRepository`, `IDeviceAllQueryRepositoriy` — note the existing typo in that last name, match it), all implemented by a single `DeviceQueryRepository` class.
+- `IManufacturerRepository` (`Domain/Manufacturers/`) — plain `IRepository<Manufacturer, ManufacturerId>`, no custom methods. Query repositories follow the same split (`IGetManufacturerQueryRepository`, `IGetManufacturerListQueryRepository`, `IManufacturerAllQueryRepository` — correctly spelled this time, don't propagate the `Devices` typo here), all implemented by `ManufacturerQueryRepository`.

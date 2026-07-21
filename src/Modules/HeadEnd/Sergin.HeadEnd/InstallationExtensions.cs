@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Sergin.HeadEnd.Application;
 using Sergin.HeadEnd.Devices;
 using Sergin.HeadEnd.Infrastructure.Data;
+using Sergin.HeadEnd.Manufacturers;
 using Sergin.SharedKernel.Infrastructure.Data.EFCore.Interceptors;
 
 namespace Sergin.HeadEnd;
@@ -22,6 +23,7 @@ public static class InstallationExtensions
         services.AddDbContextAndUnitOfWork(configuration);
 
         services.AddDeviceDependencies();
+        services.AddManufacturerDependencies();
 
         return services;
     }
@@ -35,7 +37,8 @@ public static class InstallationExtensions
         }
 
         application.MapGroup("hes")
-            .MapDeviceEndpoints();
+            .MapDeviceEndpoints()
+            .MapManufacturerEndpoints();
 
         return application;
     }
