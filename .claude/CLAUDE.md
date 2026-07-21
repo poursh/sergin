@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Sergin is a .NET 10 **modular monolith** for a HES (Head-End System) platform, built with DDD + Clean Architecture and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage. There are currently two modules: **HeadEnd** and **UserAccess**.
+Sergin is a .NET 10 **modular monolith** for a HES (Head-End System) platform, utility smart meters (electricity/gas/water head-end system), built with DDD + Clean Architecture and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage. There are currently two modules: **HeadEnd** and **UserAccess**.
 
 ## Commands
 
