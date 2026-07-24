@@ -14,26 +14,23 @@
       "Bash(* --version)",
       "Bash(* --help *)"
     ],
-    "ask": [
-      "Bash(dotnet ef database drop*)",
-      "Bash(dotnet ef migrations remove*)"
-    ],
     "deny": [
       "Bash(git push --force*)",
       "Bash(git push -f*)",
       "Bash(git reset --hard*)",
       "Bash(git clean -f*)",
-      "Bash(git branch -D*)",      
+      "Bash(git branch -D*)",
       "Bash(docker compose down -v*)",
       "Bash(docker compose * down -v*)",
       "Bash(docker volume rm*)",
       "Bash(docker system prune*)",
       "Bash(rm -rf *)",
       "Bash(Remove-Item * -Recurse -Force*)"
+    ],
+    "ask": [
+      "Bash(dotnet ef database drop*)",
+      "Bash(dotnet ef migrations remove*)"
     ]
-  },
-  "enabledPlugins": {
-    "csharp-lsp@claude-plugins-official": true
   },
   "enabledMcpjsonServers": [],
   "hooks": {
@@ -48,5 +45,9 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "csharp-lsp@claude-plugins-official": true,
+    "compound-engineering@compound-engineering-plugin": false
   }
 }

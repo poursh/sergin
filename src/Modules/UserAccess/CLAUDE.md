@@ -21,5 +21,5 @@ Only `GetOne` carries a `[RequiredPermissions]` attribute — that's the current
 
 ## Repositories
 
-- `IUserRepository` (`Domain/Users/`) — plain `IRepository<User, UserInternalId>`, no custom methods beyond the generic CRUD, implemented by `UserRepository` (EF Core) in Infrastructure.
+- `IUserRepository` (`Domain/Users/`) extends the generic `IRepository<User, UserInternalId>` with one extra method, `GetByUserName(UserName)` — a precedent for adding aggregate-specific lookups to the repository interface when the generic CRUD isn't enough (the same precedent HeadEnd's `IDeviceRepository.GetByDeviceId` documents), implemented by `UserRepository` (EF Core) in Infrastructure.
 - Query repositories are split one-interface-per-feature (`IGetUserQueryRepository`, `IGetUserListQueryRepository`, plus a module-wide `IUserAllQueryRepository`), all implemented by a single `UserQueryRepository` class using `IDbConnectionFactory` + raw SQL. Follow this split (new interface per query feature, one class implementing all of them) rather than one fat repository interface.
