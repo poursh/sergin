@@ -46,7 +46,7 @@ internal sealed class DeviceQueryRepository(
             queries, new { PageSize = query.Paggination.Size.Value, Offset = query.Paggination.Skip });
 
         int count = await res.ReadSingleAsync<int>();
-        IEnumerable<GetDeviceListItem> list = await res.ReadAsync<GetDeviceListItem>();
+        IReadOnlyCollection<GetDeviceListItem> list = [.. await res.ReadAsync<GetDeviceListItem>()];
 
         return new ListQueryResponse<GetDeviceListItem>(list, count);
     }

@@ -63,6 +63,9 @@
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Presentation.WebApi/Sergin.SharedKernel.Presentation.WebApi.csproj" />
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Presentation/Sergin.SharedKernel.Presentation.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sergin.IntegrationTests/Sergin.IntegrationTests.csproj" />
+  </Folder>
   <Project Path="docker-compose/docker-compose.dcproj">
     <Platform Project="AnyCPU" />
     <Build Solution="Debug|Any CPU" />

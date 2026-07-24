@@ -46,7 +46,7 @@ internal sealed class UserQueryRepository(
             queries, new { PageSize = query.Paggination.Size.Value, Offset = query.Paggination.Skip });
 
         int count = await res.ReadSingleAsync<int>();
-        IEnumerable<GetUserListItem> list = await res.ReadAsync<GetUserListItem>();
+        IReadOnlyCollection<GetUserListItem> list = [.. await res.ReadAsync<GetUserListItem>()];
 
         return new ListQueryResponse<GetUserListItem>(list, count);
     }

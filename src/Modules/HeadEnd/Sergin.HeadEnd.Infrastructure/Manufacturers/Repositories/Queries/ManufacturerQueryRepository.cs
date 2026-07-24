@@ -46,7 +46,7 @@ internal sealed class ManufacturerQueryRepository(
             queries, new { PageSize = query.Paggination.Size.Value, Offset = query.Paggination.Skip });
 
         int count = await res.ReadSingleAsync<int>();
-        IEnumerable<GetManufacturerListItem> list = await res.ReadAsync<GetManufacturerListItem>();
+        IReadOnlyCollection<GetManufacturerListItem> list = [.. await res.ReadAsync<GetManufacturerListItem>()];
 
         return new ListQueryResponse<GetManufacturerListItem>(list, count);
     }
