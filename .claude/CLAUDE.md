@@ -31,7 +31,7 @@ mocks. There are no unit test projects yet.
 
 ### EF Core migrations
 
-Each module owns its own `DbContext` and migrations, so `--project` must point at that module's `Infrastructure.Data` project. `HeadEndDbContext` and `UserAccessDbContext` each have an `IDesignTimeDbContextFactory` that reads `appsettings.Development.json` for the connection string:
+Each module owns its own `DbContext` and migrations, so `--project` must point at that module's `Infrastructure.Data` project. `HeadEndDbContext` and `UserAccessDbContext` each have an `IDesignTimeDbContextFactory` that reads the connection string from the `Sergin:ConnectionStrings:Database` key in `appsettings.Development.json`:
 
 ```bash
 dotnet ef migrations add <Name> \
@@ -44,6 +44,8 @@ dotnet ef migrations add <Name> \
 ```
 
 Migrations are applied automatically at startup **only in the Development environment** (`Run<Module>Module` → `ApplyMigration`, called for every module from `Sergin.Hosts.WebApi.All/Program.cs`).
+
+**Connection string sourcing**: the value isn't committed. The write side (both `DbContext`s), the read side (`IDbConnectionFactory`), and both design-time factories all read the same `Sergin:ConnectionStrings:Database` key. At runtime it comes from the `Sergin__ConnectionStrings__Database` environment variable (set in `docker-compose.yml`) or user secrets (the host declares a `UserSecretsId`) — `appsettings.json` carries only an empty placeholder and `appsettings.Development.json` carries none. **Gotcha**: the design-time factories load *only* `appsettings.Development.json` (not env vars or user secrets), so `dotnet ef` finds no connection string there unless you add the key to that file locally. `migrations add` scaffolds fine without one; `database update` from the CLI won't connect (startup auto-apply in Development is unaffected).
 
 ## Git conventions
 
