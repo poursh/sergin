@@ -55,6 +55,8 @@ Migrations are applied automatically at startup **only in the Development enviro
 
 `Directory.Build.props` sets `TreatWarningsAsErrors=true`, `AnalysisMode=All`, and enables **SonarAnalyzer.CSharp** + `EnforceCodeStyleInBuild`. Any analyzer warning, style violation, or nullable warning **fails the build**. Nullable and implicit usings are enabled solution-wide. Write code that passes analysis cleanly the first time.
 
+**Central Package Management is on.** `Directory.Packages.props` at the repo root sets `ManagePackageVersionsCentrally=true` and holds every package version as a `<PackageVersion>` entry. `PackageReference` items in the `.csproj` files (and the `SonarAnalyzer.CSharp` reference in `Directory.Build.props`) carry **no `Version` attribute** — a leftover version fails the build with NU1008. When adding a package to a project, reference it version-less (`<PackageReference Include="Foo" />`) and add/update its `<PackageVersion Include="Foo" Version="x.y.z" />` in `Directory.Packages.props`; keep that list alphabetical. The `Microsoft.Extensions.Options` transitive pin in `Sergin.Hosts.Shared` uses `PackageReference Update=` (also version-less) with its version centralized. `Directory.Packages.props` is registered in the `/solution-items/` folder of `Sergin.slnx` alongside `Directory.Build.props`.
+
 ## Architecture
 
 ### Host / module composition
