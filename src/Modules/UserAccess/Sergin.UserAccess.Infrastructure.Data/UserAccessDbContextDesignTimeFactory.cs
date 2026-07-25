@@ -13,7 +13,7 @@ internal sealed class UserAccessDbContextDesignTimeFactory() : IDesignTimeDbCont
             .AddJsonFile("appsettings.Development.json", false, false)
             .Build();
 
-        string connectionString = configuration.GetConnectionString("Database");
+        string connectionString = configuration.GetSection("Sergin").GetConnectionString("Database");
 
         var optionBuilder = new DbContextOptionsBuilder<UserAccessDbContext>();
 

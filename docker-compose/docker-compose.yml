@@ -9,9 +9,10 @@ services:
       - 5000:8080
       - 5001:8081
     environment:
-      # Development applies EF migrations on startup and loads the DB connection
-      # string (from appsettings.Development.json, host = sergin.database).
+      # Development applies EF migrations on startup.
       ASPNETCORE_ENVIRONMENT: Development
+      # Overrides Sergin:ConnectionStrings:Database (double-underscore = config section separator).
+      Sergin__ConnectionStrings__Database: Host=sergin.database;Port=5432;Database=Sergin_DB;Username=postgres;Password=Ww4pC8bzn4
     depends_on:
       sergin.database:
         condition: service_healthy
