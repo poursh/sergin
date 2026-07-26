@@ -14,15 +14,16 @@ Adding a module today touches `Sergin.Hosts.WebApi.All/Program.cs` in three plac
 2. **Subset hosts are planned** (e.g. a future `WebApi.HeadEnd`), so host-level plumbing is hoisted into `Sergin.Hosts.Shared` now.
 3. **Approach: explicit module contract + per-host list** (`ISerginModule[]` in Program.cs). Reflection auto-discovery was rejected: it saves one line per module but introduces silent-missing-module failures (the CLR doesn't load referenced-but-unused assemblies), nondeterministic ordering, and analyzer/AOT friction. A source-generator approach was rejected as overkill.
 4. **Interface-only contract, no abstract base class.** A `SerginModule<TDbContext>` base cannot work: the DbContexts are `internal`, and a public module class cannot inherit a public generic base closed over an internal type argument (CS0060). With an interface, internal types appear only inside method bodies, which is legal, and the DbContexts stay internal.
-5. **The contract lives in a new project `Sergin.SharedKernel.Modules`** containing only `ISerginModule`. The generic DbContext/migration helpers stay in `Sergin.SharedKernel.Infrastructure.Data.EFCore`, which already owns the EF/Npgsql references and the internal `EventDispatcherInterceptor` they use.
+5. **The contracts live in a new project `Sergin.SharedKernel.Modules`** containing only the contract interfaces (`ISerginModule`, `ISerginWebApiModule`). The generic DbContext/migration helpers stay in `Sergin.SharedKernel.Infrastructure.Data.EFCore`, which already owns the EF/Npgsql references and the internal `EventDispatcherInterceptor` they use.
 6. **`MigrateAsync` and `MapEndpoints` are separate contract members** (not one `RunAsync`): the module knows *how* to migrate; the host owns the *when* (dev-only policy) in exactly one place.
 7. **Forwarding DbContext registrations** (approved behavioral improvement): `TIContext` and `TIUnitOfWork` resolve to the same scoped `TContext` instance instead of today's second instance + null-unsafe `as` cast. This is the only intentional behavior change in the design.
+8. **Capability-interface split — one class per module** (added during spec review): `ISerginModule` carries only the members every host type needs (`Schema`, `ApplicationAssembly`, `AddServices`, `MigrateAsync`); endpoint mapping moves to `ISerginWebApiModule : ISerginModule`. Future capabilities (background jobs) follow the same pattern. Each module ships **one** class implementing all its capabilities — separate per-capability classes were rejected: both would inherit the core members, so a host listing both runs `AddServices` twice (double DbContext registration, duplicate MediatR notification handlers). Which capabilities *run* is the host's bootstrap choice (`modules.OfType<ISerginWebApiModule>()`), not a choice of which class to instantiate.
 
 ## Architecture
 
 | Piece | Home | Content |
 |---|---|---|
-| `ISerginModule` | **new** `src/SharedKernel/Sergin.SharedKernel.Modules` | the 5-member contract |
+| `ISerginModule`, `ISerginWebApiModule` | **new** `src/SharedKernel/Sergin.SharedKernel.Modules` | the core contract (4 members) + the web capability interface |
 | `AddModuleDbContext`, `MigrateDbContextAsync` | `Sergin.SharedKernel.Infrastructure.Data.EFCore` | generic helpers absorbing the duplicated installer bodies |
 | `AddSerginWebApi`, `UseSerginWebApiAsync` | `Sergin.Hosts.Shared` | host bootstrap: shared services + module loops |
 | `HeadEndModule`, `UserAccessModule` | each module's composition root (`Sergin.<Module>`) | one public sealed class per module, replacing the module-level `InstallationExtensions.cs` |
@@ -34,23 +35,27 @@ Per-aggregate extensions (`UserInstallationExtensions`, `DeviceInstallationExten
 ```csharp
 namespace Sergin.SharedKernel.Modules;
 
-public interface ISerginModule
+public interface ISerginModule            // core — every host type needs these
 {
     string Schema { get; }
     Assembly ApplicationAssembly { get; }
     void AddServices(IServiceCollection services, IConfigurationSection configuration);
     Task MigrateAsync(IServiceProvider services);
+}
+
+public interface ISerginWebApiModule : ISerginModule   // web capability
+{
     void MapEndpoints(RouteGroupBuilder group);
 }
 ```
 
-`Sergin.SharedKernel.Modules.csproj` is a plain `Microsoft.NET.Sdk` class library with only `<FrameworkReference Include="Microsoft.AspNetCore.App" />` (supplies `RouteGroupBuilder`, `IServiceCollection`, `IConfigurationSection`). No `PropertyGroup` — `Directory.Build.props` supplies everything. Register it in `Sergin.slnx` under the SharedKernel folder.
+Each interface gets its own file (`ISerginModule.cs`, `ISerginWebApiModule.cs`); the comments above are spec annotation, not code to copy. `Sergin.SharedKernel.Modules.csproj` is a plain `Microsoft.NET.Sdk` class library with only `<FrameworkReference Include="Microsoft.AspNetCore.App" />` — the framework reference exists solely for `ISerginWebApiModule`'s `RouteGroupBuilder`; the core `ISerginModule` uses only BCL and `Microsoft.Extensions.*` abstraction types. No `PropertyGroup` — `Directory.Build.props` supplies everything. Register it in `Sergin.slnx` under the SharedKernel folder.
 
 ## Module implementations
 
 ```csharp
 // src/Modules/HeadEnd/Sergin.HeadEnd/HeadEndModule.cs
-public sealed class HeadEndModule : ISerginModule
+public sealed class HeadEndModule : ISerginWebApiModule
 {
     public string Schema => HeadEndDbContext.Schema;
     public Assembly ApplicationAssembly => HeadEndApplicationAssemblyReference.Assembly;
@@ -70,7 +75,7 @@ public sealed class HeadEndModule : ISerginModule
 }
 ```
 
-`UserAccessModule` is identical in shape (`UserAccessDbContext`, `IUserAccessDbContext`, `IUserAccessUnitOfWork`, `AddUserDependencies()`, `MapUserEndpoints()`). Both module-level `InstallationExtensions.cs` files are **deleted** (`Register<Module>Commands`, `Add<Module>Module`, `Run<Module>Module`, and the private helpers). The `<Module>ApplicationAssemblyReference` classes stay.
+`UserAccessModule` is identical in shape (`UserAccessDbContext`, `IUserAccessDbContext`, `IUserAccessUnitOfWork`, `AddUserDependencies()`, `MapUserEndpoints()`). Both module-level `InstallationExtensions.cs` files are **deleted** (`Register<Module>Commands`, `Add<Module>Module`, `Run<Module>Module`, and the private helpers). The `<Module>ApplicationAssemblyReference` classes stay. When background jobs arrive, the same class adds `ISerginJobsModule` to its interface list — never a second implementation class (decision 8).
 
 Each composition root csproj adds a `ProjectReference` to `Sergin.SharedKernel.Modules`.
 
@@ -123,8 +128,9 @@ One new file with two extensions. Namespace: whatever namespace the existing `Ad
   3. `AddOpenApi()`; `IEventDispatcher`/`DefaultEventDispatcher`; `EventDispatcherInterceptor`; `IDbConnectionFactory` → `new PostgresDbConnectionFactory(connectionString)` where `connectionString` is read once as `serginSection.GetConnectionString("Database") ?? throw new InvalidOperationException(...)` (fail-fast replaces today's `!` bang); `AddHttpContextAccessor()`; `IUserContextFactory` → `InternalUserContextFactory` + scoped `CreateUserContext()`; `ILocalizer` → `DefaultLocalizer` — otherwise verbatim moves from today's Program.cs.
   4. `foreach` module → `module.AddServices(builder.Services, serginSection);`
 - `UseSerginWebApiAsync(this WebApplication app, IReadOnlyCollection<ISerginModule> modules)` returning `Task<WebApplication>` (mirrors today's `Run<Module>Module` shape):
-  1. `foreach` module → if `app.Environment.IsDevelopment()` then `await module.MigrateAsync(app.Services)`; then `module.MapEndpoints(app.MapGroup(module.Schema));`
-  2. `app.MapOpenApi();` and dev-only `app.MapScalarApiReference();` — same timing as today (after module endpoint mapping).
+  1. If `app.Environment.IsDevelopment()`: `foreach` module → `await module.MigrateAsync(app.Services)` — the core-contract loop, runs for every module.
+  2. `foreach` web module in `modules.OfType<ISerginWebApiModule>()` → `webModule.MapEndpoints(app.MapGroup(webModule.Schema));`
+  3. `app.MapOpenApi();` and dev-only `app.MapScalarApiReference();` — same timing as today (after module endpoint mapping).
 
 ## Resulting Program.cs
 
@@ -162,7 +168,7 @@ Adding a module to a host = one `ProjectReference` + one array element. A future
 
 ## File inventory
 
-**New**: `Sergin.SharedKernel.Modules/{csproj, ISerginModule.cs}`, `Sergin.Hosts.Shared/SerginWebApiExtensions.cs`, `Sergin.HeadEnd/HeadEndModule.cs`, `Sergin.UserAccess/UserAccessModule.cs`, `Sergin.SharedKernel.Infrastructure.Data.EFCore/ModuleDbContextExtensions.cs`.
+**New**: `Sergin.SharedKernel.Modules/{csproj, ISerginModule.cs, ISerginWebApiModule.cs}`, `Sergin.Hosts.Shared/SerginWebApiExtensions.cs`, `Sergin.HeadEnd/HeadEndModule.cs`, `Sergin.UserAccess/UserAccessModule.cs`, `Sergin.SharedKernel.Infrastructure.Data.EFCore/ModuleDbContextExtensions.cs`.
 
 **Deleted**: `Sergin.HeadEnd/InstallationExtensions.cs`, `Sergin.UserAccess/InstallationExtensions.cs`.
 
@@ -176,7 +182,7 @@ Adding a module to a host = one `ProjectReference` + one array element. A future
 
 ## Behavior parity
 
-Preserved exactly: MediatR scanning set, pipeline behavior order (PermissionCheck → Validation), module processing order (array order: HeadEnd, UserAccess), dev-only migration policy, dev-only Scalar, OpenAPI mapping timing, route group prefixes, per-schema migration history tables. The **only** intentional change is the single-scoped-DbContext unification (decision 7).
+Preserved exactly: MediatR scanning set, pipeline behavior order (PermissionCheck → Validation), module processing order (array order: HeadEnd, UserAccess), dev-only migration policy, dev-only Scalar, OpenAPI mapping timing, route group prefixes, per-schema migration history tables. One sequencing nuance from the capability split: all migrations now complete before any endpoint mapping (previously interleaved per module) — inconsequential, since endpoint mapping never touches the database. The **only** intentional change is the single-scoped-DbContext unification (decision 7).
 
 ## Testing and verification
 
@@ -189,13 +195,13 @@ No new tests. The existing integration suite (`tests/Sergin.IntegrationTests`) r
 ## Documentation and skills updates (part of this work)
 
 - **Root `.claude/CLAUDE.md`**: rewrite the "Host / module composition" section (contract, module classes, bootstrap, one-line-per-module registration); update the migrations wording (`Run<Module>Module` → host bootstrap + `ISerginModule.MigrateAsync`).
-- **`.claude/skills/add-module/SKILL.md`**: step 2 table gains the `SharedKernel.Modules` reference for the composition root; step 4 becomes "write `<Module>Module : ISerginModule`" instead of the three extension methods; step 5 becomes "csproj reference + one array element in Program.cs".
+- **`.claude/skills/add-module/SKILL.md`**: step 2 table gains the `SharedKernel.Modules` reference for the composition root; step 4 becomes "write `<Module>Module : ISerginWebApiModule`" instead of the three extension methods; step 5 becomes "csproj reference + one array element in Program.cs".
 - **`.claude/skills/add-feature/SKILL.md`**: update wherever it wires `Add<X>Dependencies` / `Map<X>Endpoints` into `InstallationExtensions` to point at the module class instead.
 
 ## Out of scope / future notes
 
 - **Background jobs** (investigated 2026-07-26; no job infrastructure exists in the codebase — build none now). Binding rules for when the first real job arrives:
-  - Job registration becomes an **optional capability interface** (e.g. `ISerginJobsModule : ISerginModule` with `AddJobs(IServiceCollection, IConfigurationSection)`), and is **never done inside `AddServices`** — otherwise every host that loads the module runs its jobs, and a scaled-out web tier executes every job once per replica. Hosts opt in explicitly (e.g. `modules.OfType<ISerginJobsModule>()`).
+  - Job registration becomes a second **capability interface** following the pattern `ISerginWebApiModule` establishes (`ISerginJobsModule : ISerginModule` with `AddJobs(IServiceCollection, IConfigurationSection)`), implemented by the module's **existing** class (one class per module, decision 8), and **never done inside `AddServices`** — otherwise every host that loads the module runs its jobs, and a scaled-out web tier executes every job once per replica. Hosts opt in explicitly (`modules.OfType<ISerginJobsModule>()`).
   - **Single-migrator rule**: exactly one host per environment auto-applies migrations (today: the web host). A jobs host's bootstrap must not call `MigrateAsync` — two hosts migrating the same database concurrently is a race.
   - A future `Sergin.Hosts.Jobs` reuses `ISerginModule` and the Hosts.Shared bootstrap unchanged: it can remain a `WebApplication` (Aspire service defaults expose health checks over HTTP) and simply never calls `MapEndpoints`. Composition intent: run jobs in-process in the all-in-one host first (one extra opt-in call); split them into the dedicated host when real workloads (fleet readouts, alarm polling, long protocol sessions) or web scale-out arrive — pinning that host to one instance defers distributed-locking concerns.
   - The job library choice (`BackgroundService` vs Quartz vs Hangfire) is deferred along with the interface — `AddJobs` is DI-registration-shaped and library-agnostic.
