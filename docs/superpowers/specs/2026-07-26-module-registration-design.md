@@ -194,6 +194,10 @@ No new tests. The existing integration suite (`tests/Sergin.IntegrationTests`) r
 
 ## Out of scope / future notes
 
-- **Worker hosts**: the contract is deliberately web-specific (`RouteGroupBuilder`). If a non-web host type appears (e.g. a meter-polling worker), add a separate contract for it then — don't pre-abstract now.
+- **Background jobs** (investigated 2026-07-26; no job infrastructure exists in the codebase — build none now). Binding rules for when the first real job arrives:
+  - Job registration becomes an **optional capability interface** (e.g. `ISerginJobsModule : ISerginModule` with `AddJobs(IServiceCollection, IConfigurationSection)`), and is **never done inside `AddServices`** — otherwise every host that loads the module runs its jobs, and a scaled-out web tier executes every job once per replica. Hosts opt in explicitly (e.g. `modules.OfType<ISerginJobsModule>()`).
+  - **Single-migrator rule**: exactly one host per environment auto-applies migrations (today: the web host). A jobs host's bootstrap must not call `MigrateAsync` — two hosts migrating the same database concurrently is a race.
+  - A future `Sergin.Hosts.Jobs` reuses `ISerginModule` and the Hosts.Shared bootstrap unchanged: it can remain a `WebApplication` (Aspire service defaults expose health checks over HTTP) and simply never calls `MapEndpoints`. Composition intent: run jobs in-process in the all-in-one host first (one extra opt-in call); split them into the dedicated host when real workloads (fleet readouts, alarm polling, long protocol sessions) or web scale-out arrive — pinning that host to one instance defers distributed-locking concerns.
+  - The job library choice (`BackgroundService` vs Quartz vs Hangfire) is deferred along with the interface — `AddJobs` is DI-registration-shaped and library-agnostic.
 - **Reflection discovery** stays rejected; revisit only if the module count makes the explicit array genuinely painful.
 - The list-query `[RequiredPermissions]` structural gap and the FK-existence-check gap noted in `CLAUDE.md` are untouched by this design.
