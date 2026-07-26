@@ -9,16 +9,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Modules\HeadEnd\Sergin.HeadEnd\Sergin.HeadEnd.csproj" />
 		<ProjectReference Include="..\..\Modules\UserAccess\Sergin.UserAccess\Sergin.UserAccess.csproj" />
-		<ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastracture.WebApi\Sergin.SharedKernel.Infrastracture.WebApi.csproj" />
 		<ProjectReference Include="..\Sergin.Hosts.Shared\Sergin.Hosts.Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Scalar.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>
