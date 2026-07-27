@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\SharedKernel\Sergin.SharedKernel.Modules\Sergin.SharedKernel.Modules.csproj" />
 		<ProjectReference Include="..\Sergin.HeadEnd.Infrastructure\Sergin.HeadEnd.Infrastructure.csproj" />
 		<ProjectReference Include="..\Sergin.HeadEnd.Presentation.WebApi\Sergin.HeadEnd.Presentation.WebApi.csproj" />
 	</ItemGroup>

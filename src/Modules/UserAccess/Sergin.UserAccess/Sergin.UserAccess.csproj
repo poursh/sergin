@@ -2,6 +2,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Sergin.UserAccess.Infrastructure\Sergin.UserAccess.Infrastructure.csproj" />
 		<ProjectReference Include="..\Sergin.UserAccess.Presentation.WebApi\Sergin.UserAccess.Presentation.WebApi.csproj" />
+		<ProjectReference Include="..\..\..\SharedKernel\Sergin.SharedKernel.Modules\Sergin.SharedKernel.Modules.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />

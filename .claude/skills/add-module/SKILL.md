@@ -21,7 +21,7 @@ All are plain `Microsoft.NET.Sdk` (not `.Web`) class libraries — `Directory.Bu
 | `Sergin.<Module>.Infrastructure` | `SharedKernel.Infrastructure`, `<Module>.Application`, `<Module>.Infrastructure.Data` | `global using Dapper;` / `global using static Dapper.SqlMapper;` |
 | `Sergin.<Module>.Infrastructure.Data` | `SharedKernel.Infrastructure.Data.EFCore`, `<Module>.Application` | (none needed yet — add if EF namespaces get noisy) |
 | `Sergin.<Module>.Presentation.WebApi` | `SharedKernel.Presentation.WebApi`, `<Module>.Application` | `global using ErrorOr;` / `MediatR` / `Sergin.SharedKernel.Presentation` / `Sergin.SharedKernel.Presentation.WebApi` / `Sergin.SharedKernel.Presentation.WebApi.Endpoints` |
-| `Sergin.<Module>` (composition root, no suffix) | `<Module>.Infrastructure`, `<Module>.Presentation.WebApi` | (none) |
+| `Sergin.<Module>` (composition root, no suffix) | `<Module>.Infrastructure`, `<Module>.Presentation.WebApi`, `SharedKernel.Modules` | (none) |
 
 The composition root's csproj also needs:
 ```xml
@@ -29,11 +29,11 @@ The composition root's csproj also needs:
   <FrameworkReference Include="Microsoft.AspNetCore.App" />
 </ItemGroup>
 ```
-(copy `Sergin.UserAccess.csproj` verbatim as the template — same two `ProjectReference`s + this `FrameworkReference`.)
+(copy `Sergin.UserAccess.csproj` verbatim as the template — same three `ProjectReference`s + this `FrameworkReference`.)
 
 **Note on the empty `Domain` project**: a C# namespace only exists once some type declares it, and this skill deliberately creates `Sergin.<Module>.Domain` with zero classes. Don't add `global using Sergin.<Module>.Domain;` to the Application project's `GlobalUsings.cs` yet — it won't compile — add that line as part of the first `/add-feature` invocation, once an aggregate under that namespace actually exists.
 
-**`InternalsVisibleTo` — three places, not one.** `<Module>DbContext`, repositories, and endpoints are all `internal`, instantiated only from the composition root, so each of `.Infrastructure`, `.Infrastructure.Data`, and `.Presentation.WebApi` needs a `Properties/AssemblyInfo.cs` granting `[assembly: InternalsVisibleTo("Sergin.<Module>")]` (copy the UserAccess ones verbatim, swap the module name). **In addition**, `src/SharedKernel/Sergin.SharedKernel.Infrastructure.Data.EFCore/Properties/AssemblyInfo.cs` gates `EventDispatcherInterceptor` (internal) behind its own explicit per-module allowlist — add `[assembly: InternalsVisibleTo("Sergin.<Module>")]` there too, or `AddInterceptors(sp.GetRequiredService<EventDispatcherInterceptor>())` in step 4 fails with CS0122. Forgetting this is the easiest way to get a build error that only shows up once the composition root project exists.
+**`InternalsVisibleTo` — three places, not one.** `<Module>DbContext`, repositories, and endpoints are all `internal`, instantiated only from the composition root, so each of `.Infrastructure`, `.Infrastructure.Data`, and `.Presentation.WebApi` needs a `Properties/AssemblyInfo.cs` granting `[assembly: InternalsVisibleTo("Sergin.<Module>")]` (copy the UserAccess ones verbatim, swap the module name).
 
 ## 2. Application-layer plumbing (composition root of DI/MediatR)
 
@@ -64,19 +64,22 @@ In `Sergin.<Module>.Infrastructure.Data/`:
 - `<Module>DbContextDesignTimeFactory.cs` — copy `UserAccessDbContextDesignTimeFactory.cs`, swapping the type name and schema. This is what lets `dotnet ef migrations add` run against `appsettings.Development.json` without the host project.
 - No `IEntityTypeConfiguration` / migration yet — those come from the first `/add-feature` slice, once there's an aggregate to map. An empty DbContext with no entities is fine as the initial scaffold; skip step 4 below (EF migration) until a feature adds a table.
 
-## 4. Composition root: `Sergin.<Module>/InstallationExtensions.cs`
+## 4. Composition root: `Sergin.<Module>/<Module>Module.cs`
 
-Copy `Sergin.UserAccess/InstallationExtensions.cs` structure exactly, renaming `UserAccess` → `<Module>`:
-- `Register<Module>Commands(this MediatRServiceConfiguration)` — calls `configuration.RegisterServicesFromAssembly(<Module>ApplicationAssemblyReference.Assembly)`.
-- `Add<Module>Module(this IServiceCollection, IConfigurationSection)` — calls a private `AddDbContextAndUnitOfWork` (registers `<Module>DbContext` with `UseNpgsql` + `MigrationsHistoryTable(HistoryRepository.DefaultTableName, <Module>DbContext.Schema)` + `UseSnakeCaseNamingConvention()` + the shared `EventDispatcherInterceptor`), then any per-aggregate `Add<X>Dependencies()` calls (none yet on a fresh module — add as features land).
-- `Run<Module>Module(this WebApplication)` — applies migrations in `Development` only, then `application.MapGroup("<schema>")` + whatever `Map<X>Endpoints()` calls exist (none yet on a fresh module).
+Create `Sergin.<Module>/<Module>Module.cs` — copy `Sergin.UserAccess/UserAccessModule.cs` exactly, renaming `UserAccess` → `<Module>` and swapping the schema/DbContext/assembly-reference types:
+
+- `public sealed class <Module>Module : ISerginWebApiModule` (from `Sergin.SharedKernel.Modules`).
+- `Schema` → `<Module>DbContext.Schema`; `ApplicationAssembly` → `<Module>ApplicationAssemblyReference.Assembly`.
+- `AddServices` → `services.AddModuleDbContext<<Module>DbContext, I<Module>DbContext, I<Module>UnitOfWork>(configuration, <Module>DbContext.Schema);` plus per-aggregate `Add<X>Dependencies()` calls (none yet on a fresh module).
+- `MigrateAsync` → `services.MigrateDbContextAsync<<Module>DbContext>();`
+- `MapEndpoints` → per-aggregate `Map<X>Endpoints()` calls (empty method body on a fresh module).
 
 Don't add an aggregate-specific `<Aggregate>InstallationExtensions.cs` (like `UserInstallationExtensions.cs`) as part of this skill — that's created by the first `/add-feature` invocation for this module.
 
 ## 5. Wire into the host
 
 - `src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj` — add `<ProjectReference Include="..\..\Modules\<Module>\Sergin.<Module>\Sergin.<Module>.csproj" />`.
-- `src/Hosts/Sergin.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and, matching the existing HeadEnd/UserAccess lines: `options.Register<Module>Commands();` inside `AddMediatR`, `builder.Services.Add<Module>Module(serginSection);`, and `await app.Run<Module>Module();`.
+- `src/Hosts/Sergin.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and one element to the modules collection: `IReadOnlyCollection<ISerginModule> modules = [new HeadEndModule(), new UserAccessModule(), new <Module>Module()];` — nothing else; the bootstrap loops handle MediatR, DI, migrations, and endpoint mapping.
 
 ## 6. Register in `Sergin.slnx`
 
