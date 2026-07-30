@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Modules\HeadEnd\Sergin.HeadEnd\Sergin.HeadEnd.csproj" />
 		<ProjectReference Include="..\..\Modules\UserAccess\Sergin.UserAccess\Sergin.UserAccess.csproj" />
-		<ProjectReference Include="..\Sergin.Hosts.Shared\Sergin.Hosts.Shared.csproj" />
+		<ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Hosts.WebApi\Sergin.SharedKernel.Hosts.WebApi.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
