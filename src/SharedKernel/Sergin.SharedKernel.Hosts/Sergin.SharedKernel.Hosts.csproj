@@ -15,12 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Application\Sergin.SharedKernel.Application.csproj" />
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastracture.Data\Sergin.SharedKernel.Infrastracture.Data.csproj" />
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastracture.WebApi\Sergin.SharedKernel.Infrastracture.WebApi.csproj" />
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastructure.Data.EFCore\Sergin.SharedKernel.Infrastructure.Data.EFCore.csproj" />
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Infrastructure\Sergin.SharedKernel.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Modules\Sergin.SharedKernel.Modules.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Application\Sergin.SharedKernel.Application.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Infrastracture.Data\Sergin.SharedKernel.Infrastracture.Data.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Infrastracture.WebApi\Sergin.SharedKernel.Infrastracture.WebApi.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Infrastructure.Data.EFCore\Sergin.SharedKernel.Infrastructure.Data.EFCore.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Infrastructure\Sergin.SharedKernel.Infrastructure.csproj" />
+    <ProjectReference Include="..\Sergin.SharedKernel.Modules\Sergin.SharedKernel.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>

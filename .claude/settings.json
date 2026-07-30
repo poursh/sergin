@@ -48,6 +48,7 @@
   },
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true,
-    "compound-engineering@compound-engineering-plugin": false
+    "compound-engineering@compound-engineering-plugin": false,
+    "dotnet-claude-kit@dotnet-claude-kit": false
   }
 }

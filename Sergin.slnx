@@ -27,7 +27,6 @@
   <Folder Name="/src/" />
   <Folder Name="/src/Hosts/">
     <Project Path="src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj" />
-    <Project Path="src/Hosts/Sergin.Hosts.Shared/Sergin.Hosts.Shared.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/HeadEnd/">
@@ -54,6 +53,9 @@
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Application/Sergin.SharedKernel.Application.csproj" />
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Domain/Sergin.SharedKernel.Domain.csproj" />
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Modules/Sergin.SharedKernel.Modules.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/Hosts/">
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.Hosts/Sergin.SharedKernel.Hosts.csproj" />
   </Folder>
   <Folder Name="/src/SharedKernel/Infrastracture/">
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Infrastracture.Data/Sergin.SharedKernel.Infrastracture.Data.csproj" />
