@@ -18,12 +18,14 @@ The solution follows modern architecture practices to keep domain logic clear an
 ```
 src/
 ├── Hosts/
-│   ├── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
-│   └── Sergin.Hosts.Shared     # Aspire service defaults (OpenTelemetry, health checks)
+│   └── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 ├── Modules/
 │   ├── HeadEnd/                # IoT device management module
 │   └── UserAccess/             # Identity & access module
-└── SharedKernel/               # Framework-level building blocks shared across modules
+└── SharedKernel/
+    ├── Sergin.SharedKernel.Hosts         # Aspire service defaults (OpenTelemetry, health checks)
+    ├── Sergin.SharedKernel.Hosts.WebApi  # Sergin WebApi bootstrap (MediatR, DI, endpoints)
+    └── ...                               # Other framework-level building blocks
 ```
 
 Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infrastructure.Data` (DbContext + migrations), and `.Presentation.WebApi` (minimal-API endpoints), plus a composition project that wires it into the host. Each module owns its own `DbContext`, migrations, and PostgreSQL schema.

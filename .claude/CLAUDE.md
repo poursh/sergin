@@ -21,10 +21,10 @@ dotnet run --project src/Hosts/Sergin.Hosts.WebApi.All      # http://localhost:5
 docker compose -f docker-compose/docker-compose.yml up --build
 
 # Run the integration test suite (needs Docker — spins up a real postgres:17 via Testcontainers)
-dotnet test tests/Sergin.IntegrationTests/Sergin.IntegrationTests.csproj
+dotnet test tests/Sergin.IntegrationTests.WebApi.All/Sergin.IntegrationTests.WebApi.All.csproj
 ```
 
-`tests/Sergin.IntegrationTests` is the only test project so far — xUnit + `Testcontainers.PostgreSql` +
+`tests/Sergin.IntegrationTests.WebApi.All` is the only test project so far — xUnit + `Testcontainers.PostgreSql` +
 `Microsoft.AspNetCore.Mvc.Testing`, exercising the real `Sergin.Hosts.WebApi.All` host end-to-end
 (HTTP → command/query handler → EF write or raw-SQL read) against a disposable container rather than
 mocks. There are no unit test projects yet.
@@ -43,7 +43,7 @@ dotnet ef migrations add <Name> \
   --startup-project src/Hosts/Sergin.Hosts.WebApi.All
 ```
 
-Migrations are applied automatically at startup **only in the Development environment** (the host bootstrap's `UseSerginWebApiAsync` in `Sergin.Hosts.Shared` calls every module's `ISerginModule.MigrateAsync`).
+Migrations are applied automatically at startup **only in the Development environment** (the host bootstrap's `UseSerginWebApiAsync` in `Sergin.SharedKernel.Hosts.WebApi` calls every module's `ISerginModule.MigrateAsync`).
 
 **Connection string sourcing**: the value isn't committed. The write side (both `DbContext`s), the read side (`IDbConnectionFactory`), and both design-time factories all read the same `Sergin:ConnectionStrings:Database` key. At runtime it comes from the `Sergin__ConnectionStrings__Database` environment variable (set in `docker-compose.yml`) or user secrets (the host declares a `UserSecretsId`) — `appsettings.json` carries only an empty placeholder and `appsettings.Development.json` carries none. **Gotcha**: the design-time factories load *only* `appsettings.Development.json` (not env vars or user secrets), so `dotnet ef` finds no connection string there unless you add the key to that file locally. `migrations add` scaffolds fine without one; `database update` from the CLI won't connect (startup auto-apply in Development is unaffected).
 
@@ -55,14 +55,15 @@ Migrations are applied automatically at startup **only in the Development enviro
 
 `Directory.Build.props` sets `TreatWarningsAsErrors=true`, `AnalysisMode=All`, and enables **SonarAnalyzer.CSharp** + `EnforceCodeStyleInBuild`. Any analyzer warning, style violation, or nullable warning **fails the build**. Nullable and implicit usings are enabled solution-wide. Write code that passes analysis cleanly the first time.
 
-**Central Package Management is on.** `Directory.Packages.props` at the repo root sets `ManagePackageVersionsCentrally=true` and holds every package version as a `<PackageVersion>` entry. `PackageReference` items in the `.csproj` files (and the `SonarAnalyzer.CSharp` reference in `Directory.Build.props`) carry **no `Version` attribute** — a leftover version fails the build with NU1008. When adding a package to a project, reference it version-less (`<PackageReference Include="Foo" />`) and add/update its `<PackageVersion Include="Foo" Version="x.y.z" />` in `Directory.Packages.props`; keep that list alphabetical. The `Microsoft.Extensions.Options` transitive pin in `Sergin.Hosts.Shared` uses `PackageReference Update=` (also version-less) with its version centralized. `Directory.Packages.props` is registered in the `/solution-items/` folder of `Sergin.slnx` alongside `Directory.Build.props`.
+**Central Package Management is on.** `Directory.Packages.props` at the repo root sets `ManagePackageVersionsCentrally=true` and holds every package version as a `<PackageVersion>` entry. `PackageReference` items in the `.csproj` files (and the `SonarAnalyzer.CSharp` reference in `Directory.Build.props`) carry **no `Version` attribute** — a leftover version fails the build with NU1008. When adding a package to a project, reference it version-less (`<PackageReference Include="Foo" />`) and add/update its `<PackageVersion Include="Foo" Version="x.y.z" />` in `Directory.Packages.props`; keep that list alphabetical. The `Microsoft.Extensions.Options` transitive pin in `Sergin.SharedKernel.Hosts.WebApi` uses `PackageReference Update=` (also version-less) with its version centralized. `Directory.Packages.props` is registered in the `/solution-items/` folder of `Sergin.slnx` alongside `Directory.Build.props`.
 
 ## Architecture
 
 ### Host / module composition
 
-- **`Sergin.Hosts.WebApi.All`** — the actual runnable Web API ("all-in-one" host). Its `Program.cs` is ~19 lines: it builds an `IReadOnlyCollection<ISerginModule>` (`[new HeadEndModule(), new UserAccessModule()]`) and hands it to the Hosts.Shared bootstrap — `builder.AddSerginWebApi(modules)` before `Build()`, `await app.UseSerginWebApiAsync(modules)` after. Adding a module to a host = one `ProjectReference` + one element in that collection.
-- **`Sergin.Hosts.Shared`** — Aspire service defaults (OpenTelemetry, health checks) **plus the Sergin web bootstrap** (`SerginWebApiExtensions`, namespace `Microsoft.Extensions.Hosting`): `AddSerginWebApi` registers MediatR (scanning every module's `ApplicationAssembly`) + pipeline behaviors, OpenAPI, event dispatcher/interceptor, `IDbConnectionFactory`, user context, localizer, then loops `module.AddServices(...)`; `UseSerginWebApiAsync` migrates every module (Development only), maps each `ISerginWebApiModule`'s endpoints under `MapGroup(module.Schema)`, then maps OpenAPI and (Development-only) Scalar.
+- **`Sergin.Hosts.WebApi.All`** — the actual runnable Web API ("all-in-one" host). Its `Program.cs` is ~19 lines: it builds an `IReadOnlyCollection<ISerginModule>` (`[new HeadEndModule(), new UserAccessModule()]`) and hands it to the WebApi bootstrap — `builder.AddSerginWebApi(modules)` before `Build()`, `await app.UseSerginWebApiAsync(modules)` after. Adding a module to a host = one `ProjectReference` + one element in that collection.
+- **`Sergin.SharedKernel.Hosts`** — Aspire service defaults (OpenTelemetry, health checks, resilience, service discovery).
+- **`Sergin.SharedKernel.Hosts.WebApi`** — Sergin-specific web bootstrap (`SerginWebApiExtensions`, namespace `Microsoft.Extensions.Hosting`): `AddSerginWebApi` registers MediatR (scanning every module's `ApplicationAssembly`) + pipeline behaviors, OpenAPI, event dispatcher/interceptor, `IDbConnectionFactory`, user context, localizer, then loops `module.AddServices(...)`; `UseSerginWebApiAsync` migrates every module (Development only), maps each `ISerginWebApiModule`'s endpoints under `MapGroup(module.Schema)`, then maps OpenAPI and (Development-only) Scalar.
 - **Modules** live under `src/Modules/<ModuleName>/`: currently **`HeadEnd`** (schema `hes`) and **`UserAccess`** (schema `ua`). A module is wired into hosts through its **`<Module>Module` class** (in the `Sergin.<Module>` composition project, no suffix) implementing `ISerginWebApiModule` from `Sergin.SharedKernel.Modules`: `Schema`, `ApplicationAssembly`, `AddServices` (calls the generic `AddModuleDbContext<TContext, TIContext, TIUnitOfWork>` helper plus per-aggregate `Add<X>Dependencies()`), `MigrateAsync`, and `MapEndpoints` (per-aggregate `Map<X>Endpoints()`). One class per module implements all its capabilities; which capabilities run is the host's choice. Each module has its own `CLAUDE.md` (`src/Modules/<Module>/CLAUDE.md`) covering aggregate-specific details (implemented feature slices, quirks, unfinished pieces) that don't belong here.
 
 ### Per-module project layering
@@ -115,7 +116,7 @@ Use the **`/add-feature`** skill (`.claude/skills/add-feature/SKILL.md`) to scaf
 ### Cross-cutting conventions
 
 - **Results**: handlers return `ErrorOr<T>` (the `ErrorOr` library, global-imported). Endpoints call `.ToApiResult()` to convert to an `IResult`/ProblemDetails.
-- **MediatR pipeline behaviors** (registered in Hosts.Shared's `AddSerginWebApi`, order matters):
+- **MediatR pipeline behaviors** (registered in `Sergin.SharedKernel.Hosts.WebApi`'s `AddSerginWebApi`, order matters):
   1. `PermissionCheckPipelineBehavior` — enforces `[RequiredPermissionsAttribute]` on any `IBaseCommand` (covers both commands and queries) against `IUserContext`.
   2. `ValidationPipelineBehavior` — runs an optional FluentValidation `IValidator<TRequest>` if one is registered.
 - **Permissions**: apply `[RequiredPermissions("permission.<schema>.<resource>.<action>")]` to a command/query record when it needs authorization, e.g. `"permission.ua.users.read"`, `"permission.hes.devices.read"`. This is opt-in per slice, not universally applied today — most commands have no attribute yet, so don't assume its absence on an existing handler is an oversight to fix incidentally.
