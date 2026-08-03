@@ -1,4 +1,4 @@
-# Sergin
+# Sergin Meter Minder
 
 A .NET 10 **modular monolith** platform, built with Domain-Driven Design (DDD), Clean Architecture, and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage.
 
