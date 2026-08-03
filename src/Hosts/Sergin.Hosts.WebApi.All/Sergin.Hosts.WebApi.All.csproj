@@ -7,7 +7,7 @@
 		<DockerComposeProjectPath>..\..\..\docker-compose\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Modules\HeadEnd\Sergin.HeadEnd\Sergin.HeadEnd.csproj" />
+		<ProjectReference Include="..\..\Modules\MeterMinder\Sergin.MeterMinder\Sergin.MeterMinder.csproj" />
 		<ProjectReference Include="..\..\Modules\UserAccess\Sergin.UserAccess\Sergin.UserAccess.csproj" />
 		<ProjectReference Include="..\..\SharedKernel\Sergin.SharedKernel.Hosts.WebApi\Sergin.SharedKernel.Hosts.WebApi.csproj" />
 	</ItemGroup>

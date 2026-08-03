@@ -2,7 +2,7 @@
 
 A .NET 10 **modular monolith** for a HES (Head-End System) / IoT platform, built with Domain-Driven Design (DDD), Clean Architecture, and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage.
 
-The central component is the **HeadEnd** module — the primary entry point for IoT device communication, data processing, and integration with other subsystems — alongside a **UserAccess** module for identity and access concerns. Both are composed into a single runnable host.
+The central component is the **MeterMinder** module — the primary entry point for IoT device communication, data processing, and integration with other subsystems — alongside a **UserAccess** module for identity and access concerns. Both are composed into a single runnable host.
 
 ## 🏗 Architectural Approach
 
@@ -10,7 +10,7 @@ The solution follows modern architecture practices to keep domain logic clear an
 
 - **Domain-Driven Design (DDD)** – Rich domain model with aggregates, strongly-typed IDs, domain events, and clear boundaries.
 - **Clean Architecture** – Strict dependency direction across `Domain → Application → Infrastructure / Presentation`.
-- **Modular Monolith** – Independent, self-contained modules (`HeadEnd`, `UserAccess`) that can later be decomposed into services.
+- **Modular Monolith** – Independent, self-contained modules (`MeterMinder`, `UserAccess`) that can later be decomposed into services.
 - **CQRS** – Writes flow through MediatR commands to EF Core repositories; reads use dedicated query repositories backed by raw SQL for performance.
 
 ## 🧱 Solution Structure
@@ -20,7 +20,7 @@ src/
 ├── Hosts/
 │   └── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 ├── Modules/
-│   ├── HeadEnd/                # IoT device management module
+│   ├── MeterMinder/                # IoT device management module
 │   └── UserAccess/             # Identity & access module
 └── SharedKernel/
     ├── Sergin.SharedKernel.Hosts         # Aspire service defaults (OpenTelemetry, health checks)
@@ -32,7 +32,7 @@ Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infras
 
 ## 📌 Key Features
 
-- Centralized **HeadEnd** for managing IoT devices and data, plus a **UserAccess** module for users and permissions.
+- Centralized **MeterMinder** for managing IoT devices and data, plus a **UserAccess** module for users and permissions.
 - Clean separation between domain, application, and infrastructure layers, enforced by project dependencies.
 - CQRS with MediatR pipeline behaviors for permission checks and validation.
 - Domain events raised on aggregates and dispatched on `SaveChanges` via EF Core interceptors.
@@ -70,11 +70,11 @@ Aspire dashboard) via Docker Compose, then attaches the debugger to the API.
 
 ### EF Core migrations
 
-Each module owns its own `DbContext` and migrations. Example for the HeadEnd module:
+Each module owns its own `DbContext` and migrations. Example for the MeterMinder module:
 
 ```bash
 dotnet ef migrations add <Name> \
-  --project src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure.Data \
+  --project src/Modules/MeterMinder/Sergin.MeterMinder.Infrastructure.Data \
   --startup-project src/Hosts/Sergin.Hosts.WebApi.All
 ```
 

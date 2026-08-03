@@ -6,7 +6,7 @@ disable-model-invocation: false
 
 Scaffold a new module for: $ARGUMENTS
 
-Expected input: `<ModuleName> <SchemaName>`, e.g. `/add-module Billing bil`. Ask the user for whatever is missing — don't guess the module name or Postgres schema code. Schema codes in use so far: `hes` (HeadEnd), `ua` (UserAccess) — pick something short and distinct.
+Expected input: `<ModuleName> <SchemaName>`, e.g. `/add-module Billing bil`. Ask the user for whatever is missing — don't guess the module name or Postgres schema code. Schema codes in use so far: `mm` (MeterMinder), `ua` (UserAccess) — pick something short and distinct.
 
 This is a much bigger, more error-prone scaffold than a single feature slice (see `/add-feature` for that). Use `src/Modules/UserAccess/**` as the reference implementation for every file below — read the matching file there before writing the new one, and match its style exactly (sealed/internal where UserAccess is sealed/internal, primary constructors, no comments). Do **not** add a first aggregate/feature as part of this skill — that's a separate `/add-feature` step once the module shell builds.
 
@@ -79,11 +79,11 @@ Don't add an aggregate-specific `<Aggregate>InstallationExtensions.cs` (like `Us
 ## 5. Wire into the host
 
 - `src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj` — add `<ProjectReference Include="..\..\Modules\<Module>\Sergin.<Module>\Sergin.<Module>.csproj" />`.
-- `src/Hosts/Sergin.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and one element to the modules collection: `IReadOnlyCollection<ISerginModule> modules = [new HeadEndModule(), new UserAccessModule(), new <Module>Module()];` — nothing else; the bootstrap loops handle MediatR, DI, migrations, and endpoint mapping.
+- `src/Hosts/Sergin.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and one element to the modules collection: `IReadOnlyCollection<ISerginModule> modules = [new MeterMinderModule(), new UserAccessModule(), new <Module>Module()];` — nothing else; the bootstrap loops handle MediatR, DI, migrations, and endpoint mapping.
 
 ## 6. Register in `Sergin.slnx`
 
-Add a new `<Folder Name="/src/Modules/<Module>/">` (mirroring the HeadEnd/UserAccess folders) listing the five non-Presentation projects, plus a `<Folder Name="/src/Modules/<Module>/Presentation/">` for the `.Presentation.WebApi` project alone — that split (Presentation project sits in its own subfolder) matches both existing modules.
+Add a new `<Folder Name="/src/Modules/<Module>/">` (mirroring the MeterMinder/UserAccess folders) listing the five non-Presentation projects, plus a `<Folder Name="/src/Modules/<Module>/Presentation/">` for the `.Presentation.WebApi` project alone — that split (Presentation project sits in its own subfolder) matches both existing modules.
 
 ## After scaffolding
 

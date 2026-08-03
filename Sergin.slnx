@@ -29,15 +29,15 @@
     <Project Path="src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
-  <Folder Name="/src/Modules/HeadEnd/">
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Application/Sergin.HeadEnd.Application.csproj" />
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Domain/Sergin.HeadEnd.Domain.csproj" />
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure.Data/Sergin.HeadEnd.Infrastructure.Data.csproj" />
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Infrastructure/Sergin.HeadEnd.Infrastructure.csproj" />
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd/Sergin.HeadEnd.csproj" />
+  <Folder Name="/src/Modules/MeterMinder/">
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder.Application/Sergin.MeterMinder.Application.csproj" />
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder.Domain/Sergin.MeterMinder.Domain.csproj" />
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder.Infrastructure.Data/Sergin.MeterMinder.Infrastructure.Data.csproj" />
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder.Infrastructure/Sergin.MeterMinder.Infrastructure.csproj" />
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder/Sergin.MeterMinder.csproj" />
   </Folder>
-  <Folder Name="/src/Modules/HeadEnd/Presentation/">
-    <Project Path="src/Modules/HeadEnd/Sergin.HeadEnd.Presentation.WebApi/Sergin.HeadEnd.Presentation.WebApi.csproj" />
+  <Folder Name="/src/Modules/MeterMinder/Presentation/">
+    <Project Path="src/Modules/MeterMinder/Sergin.MeterMinder.Presentation.WebApi/Sergin.MeterMinder.Presentation.WebApi.csproj" />
   </Folder>
   <Folder Name="/src/Modules/UserAccess/">
     <Project Path="src/Modules/UserAccess/Sergin.UserAccess.Application/Sergin.UserAccess.Application.csproj" />
