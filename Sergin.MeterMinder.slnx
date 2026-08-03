@@ -52,6 +52,7 @@
   <Folder Name="/src/SharedKernel/">
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Application/Sergin.SharedKernel.Application.csproj" />
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Domain/Sergin.SharedKernel.Domain.csproj" />
+    <Project Path="src/SharedKernel/Sergin.SharedKernel.IntegrationTests/Sergin.SharedKernel.IntegrationTests.csproj" />
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Modules/Sergin.SharedKernel.Modules.csproj" />
   </Folder>
   <Folder Name="/src/SharedKernel/Hosts/">

@@ -34,12 +34,14 @@ dotnet test tests/Sergin.MeterMinder.IntegrationTests.WebApi.All/Sergin.MeterMin
 (HTTP → command/query handler → EF write or raw-SQL read) against a disposable container rather than
 mocks. There are no unit test projects yet.
 
-**Test fixture pattern**: every test class shares one `SerginApiFactory` (`WebApplicationFactory<Program>, IAsyncLifetime`)
-via `[Collection(nameof(IntegrationTestCollection))]` — don't spin up a new factory per test class. `SerginApiFactory`
-starts a `Testcontainers.PostgreSql` container in `InitializeAsync` and sets the `Sergin__ConnectionStrings__Database`
-env var *before* the host builds (a `ConfigureWebHost` override runs too late for this). Test classes live one folder
-per aggregate (`tests/.../Users/CreateAndGetUserTests.cs`), inject `SerginApiFactory` via primary constructor, and call
-`factory.CreateClient()` to hit real HTTP endpoints.
+**Test fixture pattern**: every test class shares one `SerginWebApiFactory<Program>` (`WebApplicationFactory<TEntryPoint>, IAsyncLifetime`,
+generic over the host's entry point) via `[Collection(nameof(IntegrationTestCollection))]` — don't spin up a new factory
+per test class. `SerginWebApiFactory<TEntryPoint>` lives in the `Sergin.SharedKernel.IntegrationTests` submodule project
+(referenced here via `ProjectReference`, not owned by this repo) so any module's host can reuse it — it starts a
+`Testcontainers.PostgreSql` container in `InitializeAsync` and sets the `Sergin__ConnectionStrings__Database` env var
+*before* the host builds (a `ConfigureWebHost` override runs too late for this). Test classes live one folder per
+aggregate (`tests/.../Users/CreateAndGetUserTests.cs`), inject `SerginWebApiFactory<Program>` via primary constructor,
+and call `factory.CreateClient()` to hit real HTTP endpoints.
 
 ### EF Core migrations
 

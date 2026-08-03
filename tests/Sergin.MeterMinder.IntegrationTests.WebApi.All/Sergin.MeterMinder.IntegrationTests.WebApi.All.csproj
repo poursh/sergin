@@ -9,9 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
@@ -22,14 +20,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hosts\Sergin.MeterMinder.Hosts.WebApi.All\Sergin.MeterMinder.Hosts.WebApi.All.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\Sergin.SharedKernel.IntegrationTests\Sergin.SharedKernel.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!--
       GHSA-v5pm-xwqc-g5wc (CVE-2026-49451): stack overflow when PARSING untrusted OpenAPI
-      documents in Microsoft.OpenApi. Pulled in transitively (2.x) via Microsoft.AspNetCore.Mvc.Testing's
-      reference to Microsoft.AspNetCore.OpenApi; this test project never parses external OpenAPI documents.
-      See the matching suppression in Sergin.MeterMinder.Hosts.WebApi.All.csproj.
+      documents in Microsoft.OpenApi. Pulled in transitively (2.x) via Sergin.SharedKernel.IntegrationTests'
+      reference to Microsoft.AspNetCore.Mvc.Testing -> Microsoft.AspNetCore.OpenApi; this test project never
+      parses external OpenAPI documents. See the matching suppressions in Sergin.MeterMinder.Hosts.WebApi.All.csproj
+      and Sergin.SharedKernel.IntegrationTests.csproj.
     -->
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v5pm-xwqc-g5wc" />
   </ItemGroup>

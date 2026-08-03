@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Sergin.SharedKernel.Application;
+using Sergin.SharedKernel.IntegrationTests;
 using Sergin.UserAccess.Application.Users.Commands.Create;
 using Sergin.UserAccess.Application.Users.Commands.GetList;
 using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
@@ -8,7 +9,7 @@ using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
 namespace Sergin.IntegrationTests.Users;
 
 [Collection(nameof(IntegrationTestCollection))]
-public sealed class CreateAndGetUserTests(SerginApiFactory factory)
+public sealed class CreateAndGetUserTests(SerginWebApiFactory<Program> factory)
 {
     [Fact]
     public async Task CreateUser_ThenListUsers_IncludesCreatedUser()
