@@ -69,7 +69,7 @@
     <Project Path="src/SharedKernel/Sergin.SharedKernel.Presentation/Sergin.SharedKernel.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Sergin.IntegrationTests.WebApi.All/Sergin.IntegrationTests.WebApi.All.csproj" />
+    <Project Path="tests/Sergin.MeterMinder.IntegrationTests.WebApi.All/Sergin.MeterMinder.IntegrationTests.WebApi.All.csproj" />
   </Folder>
   <Project Path="docker-compose/docker-compose.dcproj">
     <Platform Project="AnyCPU" />

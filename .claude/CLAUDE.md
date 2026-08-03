@@ -26,10 +26,10 @@ dotnet run --project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All      # http:/
 docker compose -f docker-compose/docker-compose.yml up --build
 
 # Run the integration test suite (needs Docker — spins up a real postgres:17 via Testcontainers)
-dotnet test tests/Sergin.IntegrationTests.WebApi.All/Sergin.IntegrationTests.WebApi.All.csproj
+dotnet test tests/Sergin.MeterMinder.IntegrationTests.WebApi.All/Sergin.MeterMinder.IntegrationTests.WebApi.All.csproj
 ```
 
-`tests/Sergin.IntegrationTests.WebApi.All` is the only test project so far — xUnit + `Testcontainers.PostgreSql` +
+`tests/Sergin.MeterMinder.IntegrationTests.WebApi.All` is the only test project so far — xUnit + `Testcontainers.PostgreSql` +
 `Microsoft.AspNetCore.Mvc.Testing`, exercising the real `Sergin.MeterMinder.Hosts.WebApi.All` host end-to-end
 (HTTP → command/query handler → EF write or raw-SQL read) against a disposable container rather than
 mocks. There are no unit test projects yet.
