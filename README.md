@@ -1,8 +1,8 @@
 # Sergin
 
-A .NET 10 **modular monolith** for a HES (Head-End System) / IoT platform, built with Domain-Driven Design (DDD), Clean Architecture, and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage.
+A .NET 10 **modular monolith** platform, built with Domain-Driven Design (DDD), Clean Architecture, and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage.
 
-The central component is the **MeterMinder** module — the primary entry point for IoT device communication, data processing, and integration with other subsystems — alongside a **UserAccess** module for identity and access concerns. Both are composed into a single runnable host.
+The central component is the **MeterMinder** module — a Head-End System (HES) for smart electricity/gas/water meters, the primary entry point for IoT device communication, data processing, and integration with other subsystems — alongside a **UserAccess** module for identity and access concerns. Both are composed into a single runnable host.
 
 This repo (`Sergin.MeterMinder`) is the root/hostable repo of a three-repo split — **`src/SharedKernel/`** and **`src/Modules/UserAccess/`** are git submodules pointing at their own repos, [Sergin.SharedKernel](https://github.com/poursh/Sergin.SharedKernel) and [Sergin.UserAccess](https://github.com/poursh/Sergin.UserAccess). See "Getting Started" below for the clone step this requires.
 
@@ -22,7 +22,7 @@ src/
 ├── Hosts/
 │   └── Sergin.MeterMinder.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 ├── Modules/
-│   ├── MeterMinder/                # IoT device management module
+│   ├── MeterMinder/                # Head-End System (HES) for smart meters
 │   └── UserAccess/             # Identity & access module (git submodule)
 └── SharedKernel/                   # Framework-level building blocks (git submodule)
     ├── Sergin.SharedKernel.Hosts         # Aspire service defaults (OpenTelemetry, health checks)
@@ -34,7 +34,7 @@ Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infras
 
 ## 📌 Key Features
 
-- Centralized **MeterMinder** for managing IoT devices and data, plus a **UserAccess** module for users and permissions.
+- **MeterMinder**, a Head-End System (HES) for smart meter device and data management, plus a **UserAccess** module for users and permissions.
 - Clean separation between domain, application, and infrastructure layers, enforced by project dependencies.
 - CQRS with MediatR pipeline behaviors for permission checks and validation.
 - Domain events raised on aggregates and dispatched on `SaveChanges` via EF Core interceptors.

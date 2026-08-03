@@ -1,6 +1,6 @@
 # MeterMinder module
 
-Schema `mm`. 
+Schema `mm`. The Head-End System (HES) module — device communication and data collection for smart electricity/gas/water meters.
 
 See the root `.claude/CLAUDE.md` for cross-module conventions (layering, CQRS split, permissions, etc.) — this file only covers what's specific to the `Devices`/`DeviceModels` aggregates.
 

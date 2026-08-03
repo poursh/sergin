@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Sergin is a .NET 10 **modular monolith** for a HES (Head-End System) platform, utility smart meters (electricity/gas/water head-end system), built with DDD + Clean Architecture and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage. There are currently two modules: **MeterMinder** and **UserAccess**.
+Sergin is a .NET 10 **modular monolith** platform, built with DDD + Clean Architecture and per-feature vertical slices. It uses .NET Aspire for local orchestration and PostgreSQL for storage. There are currently two modules: **MeterMinder** — a Head-End System (HES) for smart electricity/gas/water meters (device communication, data collection) — and **UserAccess**, for identity and access.
 
 **This repo (`Sergin.MeterMinder`) is the root/hostable repo of a three-repo split** — it's never itself embedded as someone else's submodule. `src/SharedKernel/` and `src/Modules/UserAccess/` are **git submodules** pointing at their own repos ([Sergin.SharedKernel](https://github.com/poursh/Sergin.SharedKernel), [Sergin.UserAccess](https://github.com/poursh/Sergin.UserAccess)) — changes to their code happen via PRs in those repos, not here. Clone with `git clone --recurse-submodules`, or run `git submodule update --init --recursive` after a plain clone (see Commands below). Each of the three repos carries its own `.claude/CLAUDE.md` scoped to what it owns; this file only covers what's specific to being the host (the `MeterMinder` module itself, the Host project, and how the pieces compose).
 
