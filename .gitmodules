@@ -1,0 +1,6 @@
+[submodule "src/SharedKernel"]
+	path = src/SharedKernel
+	url = https://github.com/poursh/Sergin.SharedKernel.git
+[submodule "src/Modules/UserAccess"]
+	path = src/Modules/UserAccess
+	url = https://github.com/poursh/Sergin.UserAccess.git
