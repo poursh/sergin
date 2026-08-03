@@ -6,7 +6,7 @@ using Sergin.UserAccess.Application.Users.Commands.Create;
 using Sergin.UserAccess.Application.Users.Commands.GetList;
 using Sergin.UserAccess.Presentation.WebApi.Users.Endpoints.Create;
 
-namespace Sergin.IntegrationTests.Users;
+namespace Sergin.MeterMinder.IntegrationTests.WebApi.All;
 
 [Collection(nameof(IntegrationTestCollection))]
 public sealed class CreateAndGetUserTests(SerginWebApiFactory<Program> factory)
