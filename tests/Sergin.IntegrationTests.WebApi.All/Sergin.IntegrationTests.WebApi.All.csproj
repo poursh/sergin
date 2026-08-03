@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Hosts\Sergin.Hosts.WebApi.All\Sergin.Hosts.WebApi.All.csproj" />
+    <ProjectReference Include="..\..\src\Hosts\Sergin.MeterMinder.Hosts.WebApi.All\Sergin.MeterMinder.Hosts.WebApi.All.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +29,7 @@
       GHSA-v5pm-xwqc-g5wc (CVE-2026-49451): stack overflow when PARSING untrusted OpenAPI
       documents in Microsoft.OpenApi. Pulled in transitively (2.x) via Microsoft.AspNetCore.Mvc.Testing's
       reference to Microsoft.AspNetCore.OpenApi; this test project never parses external OpenAPI documents.
-      See the matching suppression in Sergin.Hosts.WebApi.All.csproj.
+      See the matching suppression in Sergin.MeterMinder.Hosts.WebApi.All.csproj.
     -->
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-v5pm-xwqc-g5wc" />
   </ItemGroup>

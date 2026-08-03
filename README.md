@@ -20,7 +20,7 @@ The solution follows modern architecture practices to keep domain logic clear an
 ```
 src/
 ├── Hosts/
-│   └── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
+│   └── Sergin.MeterMinder.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 ├── Modules/
 │   ├── MeterMinder/                # IoT device management module
 │   └── UserAccess/             # Identity & access module (git submodule)
@@ -63,7 +63,7 @@ git clone --recurse-submodules https://github.com/poursh/Sergin.MeterMinder.git
 git submodule update --init --recursive
 
 # Build (warnings are treated as errors — analyzers + SonarAnalyzer enforced)
-dotnet build Sergin.slnx
+dotnet build Sergin.MeterMinder.slnx
 
 # Run everything in Docker (API + postgres:17 + Aspire dashboard)
 # NB: submodules must be initialized first (above) — the Docker build context
@@ -73,7 +73,7 @@ docker compose -f docker-compose/docker-compose.yml up --build
 
 ### Run from Visual Studio
 
-If you use **Visual Studio** (17.13+), open `Sergin.slnx`, set **`docker-compose`**
+If you use **Visual Studio** (17.13+), open `Sergin.MeterMinder.slnx`, set **`docker-compose`**
 (`docker-compose/docker-compose.dcproj`) as the startup project, and press **F5**.
 Visual Studio builds the images and launches the full stack (API + `postgres:17` +
 Aspire dashboard) via Docker Compose, then attaches the debugger to the API.
@@ -85,7 +85,7 @@ Each module owns its own `DbContext` and migrations. Example for the MeterMinder
 ```bash
 dotnet ef migrations add <Name> \
   --project src/Modules/MeterMinder/Sergin.MeterMinder.Infrastructure.Data \
-  --startup-project src/Hosts/Sergin.Hosts.WebApi.All
+  --startup-project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All
 ```
 
 Migrations are applied automatically at startup **only in the Development environment**.

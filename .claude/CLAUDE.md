@@ -10,17 +10,17 @@ Sergin is a .NET 10 **modular monolith** for a HES (Head-End System) platform, u
 
 ## Commands
 
-Run all commands from the repo root. The solution uses the modern XML format (`Sergin.slnx`); pass it explicitly or run from the repo root so the CLI resolves it automatically. Requires the .NET 10 SDK / VS 17.13+ / Rider.
+Run all commands from the repo root. The solution uses the modern XML format (`Sergin.MeterMinder.slnx`); pass it explicitly or run from the repo root so the CLI resolves it automatically. Requires the .NET 10 SDK / VS 17.13+ / Rider.
 
 ```bash
 # First-time clone (or after cloning without --recurse-submodules)
 git submodule update --init --recursive
 
 # Build (warnings are errors — see below)
-dotnet build Sergin.slnx
+dotnet build Sergin.MeterMinder.slnx
 
 # Run the API directly (all-in-one host, Development profile applies EF migrations on startup)
-dotnet run --project src/Hosts/Sergin.Hosts.WebApi.All      # http://localhost:5000, Scalar UI at /scalar/v1
+dotnet run --project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All      # http://localhost:5000, Scalar UI at /scalar/v1
 
 # Run everything in Docker (API + postgres:17 + Aspire dashboard)
 docker compose -f docker-compose/docker-compose.yml up --build
@@ -30,7 +30,7 @@ dotnet test tests/Sergin.IntegrationTests.WebApi.All/Sergin.IntegrationTests.Web
 ```
 
 `tests/Sergin.IntegrationTests.WebApi.All` is the only test project so far — xUnit + `Testcontainers.PostgreSql` +
-`Microsoft.AspNetCore.Mvc.Testing`, exercising the real `Sergin.Hosts.WebApi.All` host end-to-end
+`Microsoft.AspNetCore.Mvc.Testing`, exercising the real `Sergin.MeterMinder.Hosts.WebApi.All` host end-to-end
 (HTTP → command/query handler → EF write or raw-SQL read) against a disposable container rather than
 mocks. There are no unit test projects yet.
 
@@ -41,11 +41,11 @@ Each module owns its own `DbContext` and migrations, so `--project` must point a
 ```bash
 dotnet ef migrations add <Name> \
   --project src/Modules/MeterMinder/Sergin.MeterMinder.Infrastructure.Data \
-  --startup-project src/Hosts/Sergin.Hosts.WebApi.All
+  --startup-project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All
 
 dotnet ef migrations add <Name> \
   --project src/Modules/UserAccess/Sergin.UserAccess.Infrastructure.Data \
-  --startup-project src/Hosts/Sergin.Hosts.WebApi.All
+  --startup-project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All
 ```
 
 Migrations are applied automatically at startup **only in the Development environment** (the host bootstrap's `UseSerginWebApiAsync` in `Sergin.SharedKernel.Hosts.WebApi` calls every module's `ISerginModule.MigrateAsync`).
@@ -60,13 +60,13 @@ Migrations are applied automatically at startup **only in the Development enviro
 
 `Directory.Build.props` sets `TreatWarningsAsErrors=true`, `AnalysisMode=All`, and enables **SonarAnalyzer.CSharp** + `EnforceCodeStyleInBuild`. Any analyzer warning, style violation, or nullable warning **fails the build**. Nullable and implicit usings are enabled solution-wide. Write code that passes analysis cleanly the first time.
 
-**Central Package Management is on.** `Directory.Packages.props` at the repo root sets `ManagePackageVersionsCentrally=true` and holds every package version as a `<PackageVersion>` entry. `PackageReference` items in the `.csproj` files (and the `SonarAnalyzer.CSharp` reference in `Directory.Build.props`) carry **no `Version` attribute** — a leftover version fails the build with NU1008. When adding a package to a project, reference it version-less (`<PackageReference Include="Foo" />`) and add/update its `<PackageVersion Include="Foo" Version="x.y.z" />` in `Directory.Packages.props`; keep that list alphabetical. The `Microsoft.Extensions.Options` transitive pin in `Sergin.SharedKernel.Hosts.WebApi` uses `PackageReference Update=` (also version-less) with its version centralized. `Directory.Packages.props` is registered in the `/solution-items/` folder of `Sergin.slnx` alongside `Directory.Build.props`.
+**Central Package Management is on.** `Directory.Packages.props` at the repo root sets `ManagePackageVersionsCentrally=true` and holds every package version as a `<PackageVersion>` entry. `PackageReference` items in the `.csproj` files (and the `SonarAnalyzer.CSharp` reference in `Directory.Build.props`) carry **no `Version` attribute** — a leftover version fails the build with NU1008. When adding a package to a project, reference it version-less (`<PackageReference Include="Foo" />`) and add/update its `<PackageVersion Include="Foo" Version="x.y.z" />` in `Directory.Packages.props`; keep that list alphabetical. The `Microsoft.Extensions.Options` transitive pin in `Sergin.SharedKernel.Hosts.WebApi` uses `PackageReference Update=` (also version-less) with its version centralized. `Directory.Packages.props` is registered in the `/solution-items/` folder of `Sergin.MeterMinder.slnx` alongside `Directory.Build.props`.
 
 ## Architecture
 
 ### Host / module composition
 
-- **`Sergin.Hosts.WebApi.All`** — the actual runnable Web API ("all-in-one" host). Its `Program.cs` is ~19 lines: it builds an `IReadOnlyCollection<ISerginModule>` (`[new MeterMinderModule(), new UserAccessModule()]`) and hands it to the WebApi bootstrap — `builder.AddSerginWebApi(modules)` before `Build()`, `await app.UseSerginWebApiAsync(modules)` after. Adding a module to a host = one `ProjectReference` + one element in that collection.
+- **`Sergin.MeterMinder.Hosts.WebApi.All`** — the actual runnable Web API ("all-in-one" host). Its `Program.cs` is ~19 lines: it builds an `IReadOnlyCollection<ISerginModule>` (`[new MeterMinderModule(), new UserAccessModule()]`) and hands it to the WebApi bootstrap — `builder.AddSerginWebApi(modules)` before `Build()`, `await app.UseSerginWebApiAsync(modules)` after. Adding a module to a host = one `ProjectReference` + one element in that collection.
 - **`Sergin.SharedKernel.Hosts`** — Aspire service defaults (OpenTelemetry, health checks, resilience, service discovery).
 - **`Sergin.SharedKernel.Hosts.WebApi`** — Sergin-specific web bootstrap (`SerginWebApiExtensions`, namespace `Microsoft.Extensions.Hosting`): `AddSerginWebApi` registers MediatR (scanning every module's `ApplicationAssembly`) + pipeline behaviors, OpenAPI, event dispatcher/interceptor, `IDbConnectionFactory`, user context, localizer, then loops `module.AddServices(...)`; `UseSerginWebApiAsync` migrates every module (Development only), maps each `ISerginWebApiModule`'s endpoints under `MapGroup(module.Schema)`, then maps OpenAPI and (Development-only) Scalar.
 - **Modules** live under `src/Modules/<ModuleName>/`: currently **`MeterMinder`** (schema `mm`) and **`UserAccess`** (schema `ua`). A module is wired into hosts through its **`<Module>Module` class** (in the `Sergin.<Module>` composition project, no suffix) implementing `ISerginWebApiModule` from `Sergin.SharedKernel.Modules`: `Schema`, `ApplicationAssembly`, `AddServices` (calls the generic `AddModuleDbContext<TContext, TIContext, TIUnitOfWork>` helper plus per-aggregate `Add<X>Dependencies()`), `MigrateAsync`, and `MapEndpoints` (per-aggregate `Map<X>Endpoints()`). One class per module implements all its capabilities; which capabilities run is the host's choice. Each module has its own `CLAUDE.md` (`src/Modules/<Module>/CLAUDE.md`) covering aggregate-specific details (implemented feature slices, quirks, unfinished pieces) that don't belong here.
@@ -138,6 +138,6 @@ Use the **`/add-feature`** skill (`.claude/skills/add-feature/SKILL.md`) to scaf
 ## SharedKernel and UserAccess are separate repos, mounted as submodules
 
 - **`src/SharedKernel/`** ([Sergin.SharedKernel](https://github.com/poursh/Sergin.SharedKernel)) — framework-level building blocks shared across modules, mirroring the module layering: `.Domain` (`AggregateRoot`, `Entity`, guard clauses, `RowVersion`), `.Application` (command/query abstractions, pipeline behaviors, security, localization, time), `.Infrastructure` + `.Infrastructure.Data.EFCore` (`SerginDbContext` base, `IDbConnectionFactory` implementations, interceptors), and `.Presentation.WebApi` (`IEndpoint`, result mapping to ProblemDetails). Prefer extending these over duplicating primitives in a module. Fully standalone-buildable on its own (`dotnet build Sergin.SharedKernel.slnx` from inside that repo) — it has zero dependencies outside itself. See its own `.claude/CLAUDE.md` for the full reference.
-- **`src/Modules/UserAccess/`** ([Sergin.UserAccess](https://github.com/poursh/Sergin.UserAccess)) — the UserAccess module. **Embed-only**: that repo deliberately has no solution file or `Directory.Build.props`/`Directory.Packages.props` of its own — it only compiles once mounted here (or in any other host that also provides a `Sergin.SharedKernel` submodule at a matching relative path). This is why `git submodule update --init --recursive` is required before `dotnet build Sergin.slnx` works from a fresh clone. See its own `.claude/CLAUDE.md` for module-specific conventions.
+- **`src/Modules/UserAccess/`** ([Sergin.UserAccess](https://github.com/poursh/Sergin.UserAccess)) — the UserAccess module. **Embed-only**: that repo deliberately has no solution file or `Directory.Build.props`/`Directory.Packages.props` of its own — it only compiles once mounted here (or in any other host that also provides a `Sergin.SharedKernel` submodule at a matching relative path). This is why `git submodule update --init --recursive` is required before `dotnet build Sergin.MeterMinder.slnx` works from a fresh clone. See its own `.claude/CLAUDE.md` for module-specific conventions.
 
 Both are mounted at the *same relative paths* they occupied before the split (`src/SharedKernel/`, `src/Modules/UserAccess/`), which is what lets every `ProjectReference` in this repo and in UserAccess's own `.csproj` files resolve without any path rewrites — MSBuild's `Directory.Build.props`/`Directory.Packages.props` auto-discovery walks up the physical directory tree and doesn't care that a submodule boundary sits partway up.

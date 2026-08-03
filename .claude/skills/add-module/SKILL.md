@@ -78,10 +78,10 @@ Don't add an aggregate-specific `<Aggregate>InstallationExtensions.cs` (like `Us
 
 ## 5. Wire into the host
 
-- `src/Hosts/Sergin.Hosts.WebApi.All/Sergin.Hosts.WebApi.All.csproj` — add `<ProjectReference Include="..\..\Modules\<Module>\Sergin.<Module>\Sergin.<Module>.csproj" />`.
-- `src/Hosts/Sergin.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and one element to the modules collection: `IReadOnlyCollection<ISerginModule> modules = [new MeterMinderModule(), new UserAccessModule(), new <Module>Module()];` — nothing else; the bootstrap loops handle MediatR, DI, migrations, and endpoint mapping.
+- `src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All/Sergin.MeterMinder.Hosts.WebApi.All.csproj` — add `<ProjectReference Include="..\..\Modules\<Module>\Sergin.<Module>\Sergin.<Module>.csproj" />`.
+- `src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All/Program.cs` — add `using Sergin.<Module>;` and one element to the modules collection: `IReadOnlyCollection<ISerginModule> modules = [new MeterMinderModule(), new UserAccessModule(), new <Module>Module()];` — nothing else; the bootstrap loops handle MediatR, DI, migrations, and endpoint mapping.
 
-## 6. Register in `Sergin.slnx`
+## 6. Register in `Sergin.MeterMinder.slnx`
 
 Add a new `<Folder Name="/src/Modules/<Module>/">` (mirroring the MeterMinder/UserAccess folders) listing the five non-Presentation projects, plus a `<Folder Name="/src/Modules/<Module>/Presentation/">` for the `.Presentation.WebApi` project alone — that split (Presentation project sits in its own subfolder) matches both existing modules.
 
@@ -89,7 +89,7 @@ Add a new `<Folder Name="/src/Modules/<Module>/">` (mirroring the MeterMinder/Us
 
 1. Build to confirm the empty module compiles and wires up cleanly — this repo treats every analyzer/style warning as a build error:
    ```
-   dotnet build Sergin.slnx
+   dotnet build Sergin.MeterMinder.slnx
    ```
-2. Run `dotnet run --project src/Hosts/Sergin.Hosts.WebApi.All` and confirm the app still starts (new module has no endpoints yet, so nothing new appears at `/scalar/v1`, but startup must not throw).
+2. Run `dotnet run --project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All` and confirm the app still starts (new module has no endpoints yet, so nothing new appears at `/scalar/v1`, but startup must not throw).
 3. Hand off to `/add-feature <Module> <Aggregate> <Feature> command` for the module's first vertical slice — that step is what actually creates the aggregate, the `IEntityTypeConfiguration`, and the first EF migration.
