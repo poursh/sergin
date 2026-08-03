@@ -4,6 +4,8 @@ A .NET 10 **modular monolith** for a HES (Head-End System) / IoT platform, built
 
 The central component is the **MeterMinder** module — the primary entry point for IoT device communication, data processing, and integration with other subsystems — alongside a **UserAccess** module for identity and access concerns. Both are composed into a single runnable host.
 
+This repo (`Sergin.MeterMinder`) is the root/hostable repo of a three-repo split — **`src/SharedKernel/`** and **`src/Modules/UserAccess/`** are git submodules pointing at their own repos, [Sergin.SharedKernel](https://github.com/poursh/Sergin.SharedKernel) and [Sergin.UserAccess](https://github.com/poursh/Sergin.UserAccess). See "Getting Started" below for the clone step this requires.
+
 ## 🏗 Architectural Approach
 
 The solution follows modern architecture practices to keep domain logic clear and the system maintainable and scalable:
@@ -21,8 +23,8 @@ src/
 │   └── Sergin.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
 ├── Modules/
 │   ├── MeterMinder/                # IoT device management module
-│   └── UserAccess/             # Identity & access module
-└── SharedKernel/
+│   └── UserAccess/             # Identity & access module (git submodule)
+└── SharedKernel/                   # Framework-level building blocks (git submodule)
     ├── Sergin.SharedKernel.Hosts         # Aspire service defaults (OpenTelemetry, health checks)
     ├── Sergin.SharedKernel.Hosts.WebApi  # Sergin WebApi bootstrap (MediatR, DI, endpoints)
     └── ...                               # Other framework-level building blocks
@@ -54,10 +56,18 @@ Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infras
 Requires the **.NET 10 SDK** (VS 17.13+ / Rider). Run all commands from the repo root.
 
 ```bash
+# Clone with submodules (SharedKernel + UserAccess live in their own repos)
+git clone --recurse-submodules https://github.com/poursh/Sergin.MeterMinder.git
+
+# ...or, for an existing clone that didn't use --recurse-submodules:
+git submodule update --init --recursive
+
 # Build (warnings are treated as errors — analyzers + SonarAnalyzer enforced)
 dotnet build Sergin.slnx
 
 # Run everything in Docker (API + postgres:17 + Aspire dashboard)
+# NB: submodules must be initialized first (above) — the Docker build context
+# copies the whole working tree, submodule content included.
 docker compose -f docker-compose/docker-compose.yml up --build
 ```
 
