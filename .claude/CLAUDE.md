@@ -34,6 +34,13 @@ dotnet test tests/Sergin.IntegrationTests.WebApi.All/Sergin.IntegrationTests.Web
 (HTTP → command/query handler → EF write or raw-SQL read) against a disposable container rather than
 mocks. There are no unit test projects yet.
 
+**Test fixture pattern**: every test class shares one `SerginApiFactory` (`WebApplicationFactory<Program>, IAsyncLifetime`)
+via `[Collection(nameof(IntegrationTestCollection))]` — don't spin up a new factory per test class. `SerginApiFactory`
+starts a `Testcontainers.PostgreSql` container in `InitializeAsync` and sets the `Sergin__ConnectionStrings__Database`
+env var *before* the host builds (a `ConfigureWebHost` override runs too late for this). Test classes live one folder
+per aggregate (`tests/.../Users/CreateAndGetUserTests.cs`), inject `SerginApiFactory` via primary constructor, and call
+`factory.CreateClient()` to hit real HTTP endpoints.
+
 ### EF Core migrations
 
 Each module owns its own `DbContext` and migrations, so `--project` must point at that module's `Infrastructure.Data` project. `MeterMinderDbContext` and `UserAccessDbContext` each have an `IDesignTimeDbContextFactory` that reads the connection string from the `Sergin:ConnectionStrings:Database` key in `appsettings.Development.json`:
