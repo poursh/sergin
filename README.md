@@ -18,16 +18,20 @@ The solution follows modern architecture practices to keep domain logic clear an
 ## 🧱 Solution Structure
 
 ```
-src/
-├── Hosts/
-│   └── Sergin.MeterMinder.Hosts.WebApi.All # Runnable all-in-one Web API (composition root)
-├── Modules/
-│   ├── MeterMinder/                # Head-End System (HES) for smart meters
-│   └── UserAccess/             # Identity & access module (git submodule)
-└── SharedKernel/                   # Framework-level building blocks (git submodule)
-    ├── Sergin.SharedKernel.Hosts         # Aspire service defaults (OpenTelemetry, health checks)
-    ├── Sergin.SharedKernel.Hosts.WebApi  # Sergin WebApi bootstrap (MediatR, DI, endpoints)
-    └── ...                               # Other framework-level building blocks
+.
+├── src/
+│   ├── Hosts/
+│   │   └── Sergin.MeterMinder.Hosts.WebApi.All/  # Runnable all-in-one Web API (composition root)
+│   ├── Modules/
+│   │   ├── MeterMinder/                          # Head-End System (HES) for smart meters
+│   │   └── UserAccess/                           # Identity & access module (git submodule)
+│   └── SharedKernel/                             # Framework-level building blocks (git submodule)
+│       ├── Sergin.SharedKernel.Hosts             # Aspire service defaults (OpenTelemetry, health checks)
+│       ├── Sergin.SharedKernel.Hosts.WebApi      # Sergin WebApi bootstrap (MediatR, DI, endpoints)
+│       └── ...                                   # Other framework-level building blocks
+├── tests/
+│   └── Sergin.MeterMinder.IntegrationTests.WebApi.All/  # xUnit + Testcontainers, exercises the real host end-to-end
+└── docker-compose/                               # API + postgres:17 + Aspire dashboard
 ```
 
 Each module is split into `.Domain`, `.Application`, `.Infrastructure`, `.Infrastructure.Data` (DbContext + migrations), and `.Presentation.WebApi` (minimal-API endpoints), plus a composition project that wires it into the host. Each module owns its own `DbContext`, migrations, and PostgreSQL schema.
@@ -64,11 +68,23 @@ git submodule update --init --recursive
 
 # Build (warnings are treated as errors — analyzers + SonarAnalyzer enforced)
 dotnet build Sergin.MeterMinder.slnx
+```
 
-# Run everything in Docker (API + postgres:17 + Aspire dashboard)
+### Run the API
+
+```bash
+# Directly on the host — the Development profile applies EF migrations on startup.
+# Needs a Sergin:ConnectionStrings:Database connection string, e.g. as a user secret
+# (the host declares a UserSecretsId) pointing at a Postgres instance you have running.
+dotnet run --project src/Hosts/Sergin.MeterMinder.Hosts.WebApi.All
+# → http://localhost:5000, Scalar UI at /scalar/v1
+
+# ...or run everything in Docker (API + postgres:17 + Aspire dashboard) — no secrets
+# needed, the connection string is set via environment variable in docker-compose.yml.
 # NB: submodules must be initialized first (above) — the Docker build context
 # copies the whole working tree, submodule content included.
 docker compose -f docker-compose/docker-compose.yml up --build
+# → API at http://localhost:5000, Aspire dashboard at http://localhost:18888
 ```
 
 ### Run from Visual Studio
@@ -90,4 +106,19 @@ dotnet ef migrations add <Name> \
 
 Migrations are applied automatically at startup **only in the Development environment**.
 
+### Run the integration tests
+
+```bash
+# Needs Docker — spins up a real postgres:17 via Testcontainers
+dotnet test tests/Sergin.MeterMinder.IntegrationTests.WebApi.All/Sergin.MeterMinder.IntegrationTests.WebApi.All.csproj
+```
+
 > **Note:** `Directory.Build.props` enables `TreatWarningsAsErrors`, `AnalysisMode=All`, and SonarAnalyzer with `EnforceCodeStyleInBuild`. Any analyzer, style, or nullable warning will fail the build.
+
+## 📄 License
+
+[MIT](LICENSE) © Pejman Pourshirazi. `SharedKernel` and `UserAccess` are separate repos, each under their own MIT license.
+
+---
+
+See [`.claude/CLAUDE.md`](.claude/CLAUDE.md) for the full architecture and workflow reference used by Claude Code — equally useful as a deeper-dive for human contributors.
